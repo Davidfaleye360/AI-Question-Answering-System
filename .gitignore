@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Training outputs and model weights (models go to the Hugging Face Hub, not GitHub)
+outputs/
+checkpoints/
+wandb/
+runs/
+*.safetensors
+*.bin
+*.pt
+
+# Hugging Face caches
+.cache/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+
+# Local Claude Code notes (not part of the project)
+CLAUDE.md

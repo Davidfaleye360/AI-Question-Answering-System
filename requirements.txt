@@ -1,0 +1,21 @@
+# Core
+# transformers 5.x removed the "question-answering" pipeline and renamed some Trainer
+# arguments, so we stay on 4.x, which the Hugging Face course code is written for.
+transformers>=4.46,<5
+datasets>=2.20
+evaluate>=0.4
+accelerate>=0.26
+torch>=2.1
+
+# Utilities
+pyyaml>=6.0
+pandas>=2.0
+matplotlib>=3.7
+
+# Demo (week 3)
+gradio>=4.0
+
+# Development
+pytest>=7.0
+
+# Pin exact versions (pip freeze) on the day the full training run starts, for reproducibility.
