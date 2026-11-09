@@ -119,8 +119,16 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
 - **2026-11-09, repo moved to David's account.** David only had read access to Kosi's original (empty)
   `Kosiso7-og/AI-Question-Answering-System`, so the project now lives at
   https://github.com/Davidfaleye360/AI-Question-Answering-System, with Kosi (`Kosiso7-og`) invited as a
-  collaborator with write access. T1 was pushed to `main` there the same day. It was created private; the Colab notebooks clone it without a login, so it
-  has to be public (or Colab needs a token) before T2 and T3 can run there.
+  collaborator with write access. T1 was pushed to `main` there the same day, and the repo was made public
+  so the Colab notebooks can clone it without a login.
+- **T2 (explore the data), 2026-11-09.** `notebooks/01_explore_data.ipynb` ran top to bottom on real data on
+  David's Mac (CPU), all 14 code cells without errors; not yet run in Colab. Numbers are in
+  `results/data_stats.md`: train 130,319 questions (43,498 unanswerable, 33.4%), dev 11,873 (5,945
+  unanswerable, 50.1%); passages have a median of 142 tokens and only 0.9% of examples need more than one
+  384-token window; dev answers have a median of 2 words. `deepset/roberta-base-squad2` on 50 random dev
+  questions scored EM 80.0 / F1 82.7, in line with its published 79.9 / 82.9 (50 questions is a small
+  sample, so the close match is partly luck). Notebook fix: the sanity-check cell now calls
+  `{sys.executable}` instead of `python`, so it uses the notebook's own Python.
 
 ## Open questions
 

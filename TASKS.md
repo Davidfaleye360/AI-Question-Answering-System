@@ -15,7 +15,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
   Folder structure, requirements, config file, preprocessing module with unit tests,
   data exploration notebook, preprocessing sanity-check script.
   _Done when:_ `pytest` passes locally and `scripts/check_preprocessing.py` passes in Colab.
-- [ ] **T2. Explore the data and try a ready-made model** (B)
+- [x] **T2. Explore the data and try a ready-made model** (B) · _ran top to bottom on David's Mac (CPU) on 2026-11-09, no errors; numbers are in `results/data_stats.md`. RoBERTa on 50 dev questions: EM 80.0, F1 82.7. Not yet run in Colab._
   Run `notebooks/01_explore_data.ipynb` in Colab. Record dataset stats and the RoBERTa baseline on 50 dev questions.
   _Done when:_ the notebook runs top to bottom and the numbers are copied into `results/data_stats.md`.
 - [ ] **T3. Smoke-test training** (A)

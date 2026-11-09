@@ -50,7 +50,8 @@ AI-Question-Answering-System/
 │   └── 01_explore_data.ipynb   # dataset stats + a ready-made model as a baseline
 ├── tests/                      # unit tests (no internet or GPU needed)
 ├── pytest.ini
-└── results/                    # metrics, plots, labeled errors (added later)
+└── results/
+    └── data_stats.md           # dataset statistics from notebook 01 (more results added later)
 ```
 
 Coming next: `src/postprocess.py`, `src/evaluate.py`, `src/train.py`, `notebooks/02_train_colab.ipynb`,
