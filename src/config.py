@@ -4,6 +4,10 @@ Usage:
     from src.config import load_config
     cfg = load_config("configs/distilbert.yaml")
     cfg.preprocessing.max_length  # 384
+
+    # The same settings with the smoke-test changes applied on top:
+    smoke = load_config("configs/distilbert.yaml", overrides="configs/smoke.yaml")
+    smoke.training.max_steps      # 50
 """
 from __future__ import annotations
 
@@ -39,9 +43,11 @@ class TrainingConfig:
     learning_rate: float = 3e-5
     batch_size: int = 16
     num_epochs: int = 2
+    max_steps: int = -1        # -1 = train for num_epochs; a positive number stops after that many steps
     warmup_ratio: float = 0.1
     weight_decay: float = 0.01
     fp16: bool = True
+    logging_steps: int = 100   # how often the training loss is recorded
     save_steps: int = 2000
     save_total_limit: int = 2
     seed: int = 42
@@ -73,13 +79,30 @@ def _build(cls, values: dict[str, Any] | None):
     return cls(**values)
 
 
-def load_config(path: str | Path = "configs/distilbert.yaml") -> Config:
-    """Read a YAML config file. Missing settings fall back to the defaults above."""
+def _read_yaml(path: str | Path) -> dict[str, Any]:
+    """Read one YAML file into a dict of sections, rejecting section names we don't know."""
     with open(path, "r", encoding="utf-8") as f:
         raw = yaml.safe_load(f) or {}
     unknown = set(raw) - {f.name for f in fields(Config)}
     if unknown:
-        raise ValueError(f"Unknown config section(s): {sorted(unknown)}")
+        raise ValueError(f"Unknown config section(s) in {path}: {sorted(unknown)}")
+    return raw
+
+
+def load_config(
+    path: str | Path = "configs/distilbert.yaml",
+    overrides: str | Path | None = None,
+) -> Config:
+    """Read a YAML config file. Missing settings fall back to the defaults above.
+
+    `overrides` is an optional second YAML file that lists only the settings to change,
+    such as configs/smoke.yaml for the 50-step smoke test. Everything it doesn't mention
+    keeps its value from the main file, so the two runs can't drift apart by accident.
+    """
+    raw = _read_yaml(path)
+    if overrides is not None:
+        for section, values in _read_yaml(overrides).items():
+            raw[section] = {**(raw.get(section) or {}), **(values or {})}
     return Config(
         model=_build(ModelConfig, raw.get("model")),
         data=_build(DataConfig, raw.get("data")),

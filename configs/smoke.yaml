@@ -1,0 +1,13 @@
+# Smoke test (T3): a 50-step run on 1% of the data, to prove training works before the full run.
+# This file lists only what differs from distilbert.yaml. Use it on top of the main config:
+#
+#   python -m src.train --config configs/distilbert.yaml --overrides configs/smoke.yaml
+
+data:
+  train_fraction: 0.01                      # about 1,300 of the 130,319 training questions
+
+training:
+  output_dir: outputs/smoke
+  max_steps: 50                             # stop after 50 batches instead of 2 epochs
+  logging_steps: 5                          # record the loss every 5 steps: 10 points to compare
+  save_steps: 25                            # two checkpoints, so we see saving work

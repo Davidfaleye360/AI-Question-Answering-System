@@ -129,6 +129,23 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
   questions scored EM 80.0 / F1 82.7, in line with its published 79.9 / 82.9 (50 questions is a small
   sample, so the close match is partly luck). Notebook fix: the sanity-check cell now calls
   `{sys.executable}` instead of `python`, so it uses the notebook's own Python.
+- **T3 (smoke-test training), 2026-11-09.** Wrote `src/train.py` (Hugging Face `Trainer`, resumes from the
+  newest checkpoint unless `--fresh`, ends with `RESULT: PASS`/`FAIL`), `configs/smoke.yaml` and
+  `notebooks/02_train_colab.ipynb`. Design decisions:
+  - Run variants are small YAML files layered on the main config (`load_config(path, overrides=...)`), so the
+    smoke test uses the real learning rate, batch size and window size and only changes data fraction, step
+    count, logging and saving. New settings: `training.max_steps` and `training.logging_steps`.
+  - `fp16` stays `true` in the config and is switched off automatically when there is no CUDA GPU.
+  - "Loss went down" compares the average of the first third of the recorded losses with the last third,
+    because single batches are noisy.
+  - Local result on the Mac's Apple GPU (`mps`, no fp16): 1,303 questions → 1,324 windows; loss 5.86 at
+    step 5 (a blind guess among 384 positions is ln 384 ≈ 5.95) down to 3.58 at step 50; `checkpoint-25`,
+    `checkpoint-50` and the final model saved; the saved model loads in a `question-answering` pipeline.
+    It took 472 s, so anything bigger than the smoke test belongs on Colab.
+  - Still to do for T3: run notebook 02 in Colab on a T4. That is the first test of fp16 and of the Colab
+    setup cell (`pip install -r requirements.txt` over Colab's preinstalled packages).
+- 37 offline unit tests now (12 new for training and config overrides), including a 4-step training run of a
+  1-layer DistilBERT that checks checkpoints, the saved model and resuming.
 
 ## Open questions
 

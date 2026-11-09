@@ -76,6 +76,27 @@ def test_config_rejects_typos(tmp_path: Path):
         load_config(bad)
 
 
+def test_smoke_overrides_change_only_what_they_list():
+    base = load_config(ROOT / "configs" / "distilbert.yaml")
+    smoke = load_config(ROOT / "configs" / "distilbert.yaml", overrides=ROOT / "configs" / "smoke.yaml")
+    # Changed by configs/smoke.yaml:
+    assert smoke.data.train_fraction == pytest.approx(0.01)
+    assert smoke.training.max_steps == 50
+    assert smoke.training.save_steps < smoke.training.max_steps, "the smoke test must save a checkpoint"
+    assert smoke.training.output_dir != base.training.output_dir, "must not write into the full run's folder"
+    # Everything else is inherited, so the smoke test exercises the real settings:
+    assert smoke.training.learning_rate == base.training.learning_rate
+    assert smoke.training.batch_size == base.training.batch_size
+    assert smoke.preprocessing == base.preprocessing and smoke.model == base.model
+
+
+def test_overrides_reject_typos(tmp_path: Path):
+    bad = tmp_path / "bad_overrides.yaml"
+    bad.write_text("training:\n  max_step: 50\n")
+    with pytest.raises(ValueError, match="max_step"):
+        load_config(ROOT / "configs" / "distilbert.yaml", overrides=bad)
+
+
 def test_sanity_check_script_passes_on_good_labels(tokenizer):
     import importlib.util
 
