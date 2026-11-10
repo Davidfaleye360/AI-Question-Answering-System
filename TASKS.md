@@ -44,7 +44,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
   Sweep τ on the dev set and plot F1 against it. Measure CPU time per question and model size for both models.
 - [ ] **T8. Error analysis** (B)
   `notebooks/03_error_analysis.ipynb`: label at least 50 wrong predictions by type, break F1 down by question word and answer length.
-- [ ] **T9. Gradio demo** (B) · _written and tried locally on 2026-11-10 (`python app/app.py`): both models answer, the slider flips answers without re-running the model, the model switch works. To finish: deploy with `python scripts/deploy_space.py` (needs a Hugging Face login) and check the Space online._
+- [x] **T9. Gradio demo** (B) · _done on 2026-11-10. `python app/app.py` runs it locally; `--share` gives a public `gradio.live` link (tested from David's Mac). **Not on a Hugging Face Space:** Hugging Face now requires a paid PRO plan for Gradio Spaces, so we start the demo on demand instead, from `notebooks/04_demo_colab.ipynb` or a laptop (David's decision). Still to check: notebook 04 has not been run in Colab yet._
   `app/app.py`: passage and question inputs, highlighted answer, top candidates, threshold slider, model switch. Deploy to a Hugging Face Space.
 
 **Milestone: demo online.**

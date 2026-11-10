@@ -13,7 +13,7 @@ pandas>=2.0
 matplotlib>=3.7
 
 # Demo (week 3)
-gradio>=4.0
+gradio>=6.0,<7                 # app/app.py passes the theme to launch(), which needs Gradio 6
 
 # Development
 pytest>=7.0

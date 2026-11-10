@@ -16,10 +16,22 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | --- | --- | --- |
 | 1 | Pipeline works on a small sample | Done |
 | 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
-| 3 | Demo online | In progress: demo runs locally, not deployed yet; error analysis to do |
+| 3 | Demo online | Demo done (run it from Colab or your computer); error analysis to do |
 | 4 | Report and presentation | Not started |
 
 See [TASKS.md](TASKS.md) for the full task list.
+
+## Try the demo
+
+The demo is not hosted permanently, but anyone can start it in about two minutes:
+
+- **In the browser, nothing to install:** open
+  [notebooks/04_demo_colab.ipynb in Google Colab](https://colab.research.google.com/github/Davidfaleye360/AI-Question-Answering-System/blob/main/notebooks/04_demo_colab.ipynb)
+  (needs a Google account), run its two code cells, and open the `gradio.live` link it prints.
+- **On your own computer:** follow "Getting started" below, then run `python app/app.py`.
+
+Our trained model is public at [Ingsyling/distilbert-squad2](https://huggingface.co/Ingsyling/distilbert-squad2),
+so the demo downloads it by itself.
 
 ## Results
 
@@ -73,14 +85,15 @@ AI-Question-Answering-System/
 │   └── demo.py                 # what the demo shows (no user-interface code)
 ├── app/
 │   ├── app.py                  # the Gradio demo screen
-│   ├── README.md               # settings and description of the Hugging Face Space
-│   └── requirements.txt        # what the Space installs
+│   ├── README.md               # for a Hugging Face Space (optional, see "The demo")
+│   └── requirements.txt        # what such a Space would install
 ├── scripts/
 │   ├── check_preprocessing.py  # sanity check: labels decode back to the right answers
-│   └── deploy_space.py         # copies the demo to a Hugging Face Space
+│   └── deploy_space.py         # copies the demo to a Hugging Face Space (needs a paid plan)
 ├── notebooks/
 │   ├── 01_explore_data.ipynb   # dataset stats + a ready-made model as a baseline
-│   └── 02_train_colab.ipynb    # training in Colab: smoke test, full run, dev-set score
+│   ├── 02_train_colab.ipynb    # training in Colab: smoke test, full run, dev-set score
+│   └── 04_demo_colab.ipynb     # starts the demo in Colab with a public link
 ├── tests/                      # unit tests (no internet or GPU needed)
 ├── pytest.ini
 └── results/
@@ -152,10 +165,12 @@ python -m src.benchmark --models Ingsyling/distilbert-squad2 deepset/roberta-bas
 ```
 
 Run the demo on your own computer. It downloads our model the first time (about 270 MB) and opens at
-http://127.0.0.1:7860:
+http://127.0.0.1:7860. With `--share` it also prints a public `gradio.live` link that works for as long as
+the program keeps running (one week at most):
 
 ```bash
 python app/app.py
+python app/app.py --share
 ```
 
 ## The demo
@@ -169,6 +184,10 @@ python app/app.py
 - a switch between our DistilBERT and the RoBERTa baseline
 
 Long passages work too: they are read in overlapping windows, like in training.
+
+**Hosting.** We planned to host the demo on a Hugging Face Space. Hugging Face now requires a paid PRO plan
+for Gradio Spaces, so instead the demo is started on demand, from Colab or a laptop, with a public link.
+`scripts/deploy_space.py` still works for anyone with a PRO account: `python scripts/deploy_space.py --space <user>/<name>`.
 
 ## How the pipeline works
 

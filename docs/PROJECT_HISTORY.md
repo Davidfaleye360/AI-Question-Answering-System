@@ -253,6 +253,22 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     and a CPU-only requirements file into the layout a Space expects and uploads it to
     `Ingsyling/squad2-qa-demo`. A test follows the app's imports and fails if a needed module isn't copied.
     A dry run and an import of the copied app both work; the real upload needs David's Hugging Face login.
+- **T9 hosting decision, 2026-11-10.** `python scripts/deploy_space.py` failed at creating the Space with
+  "402 Payment Required: hosting Gradio and Docker Spaces on free cpu-basic requires a PRO subscription".
+  Options were: (A) no permanent hosting, start the demo on demand with a public Gradio link; (B) pay for
+  PRO; (C) rewrite the demo as a static Space that runs the model in the browser with JavaScript.
+  **David chose A.** C would have thrown away the tested Python path.
+  - `python app/app.py --share` prints a `https://....gradio.live` link. Tested from David's Mac: the link
+    served the app. The model still runs on the computer that started it; the link forwards visitors
+    there, so it stops when the program stops and expires after a week.
+  - `notebooks/04_demo_colab.ipynb` starts the same thing in Colab (free CPU is enough), so anyone with a
+    Google account can run the demo without installing anything. Not yet run in Colab.
+  - `requirements.txt` now pins `gradio>=6.0,<7`: the app passes its theme to `launch()`, which older
+    Gradio versions (such as one Colab may have preinstalled) don't accept.
+  - The Space card and `scripts/deploy_space.py` stay in the repo; they work for an account with PRO.
+  - For the presentation: start the demo beforehand and put that day's link in the QR code (T12). A fixed
+    QR code can point at the README's "Try the demo" section instead. Worth asking Dr. Li whether a demo
+    run live from Colab meets the "deployed demo" expectation, since the proposal said Hugging Face Space.
 
 ## Open questions
 

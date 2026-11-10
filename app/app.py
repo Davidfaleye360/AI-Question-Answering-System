@@ -4,11 +4,18 @@ Run it on your own computer (it opens at http://127.0.0.1:7860):
 
     python app/app.py
 
+Add --share to also get a public https://....gradio.live link that anyone can open. The
+link works for as long as this program keeps running (one week at most), because the
+model still runs on this computer; the link only forwards visitors to it.
+
+    python app/app.py --share
+
 This file only describes the screen. What the model does is in src/predict.py and what is
 shown is decided in src/demo.py, both of which have unit tests.
 """
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -100,4 +107,9 @@ with gr.Blocks(title="SQuAD 2.0 question answering") as demo:
 
 
 if __name__ == "__main__":
-    demo.launch(theme=gr.themes.Soft())
+    parser = argparse.ArgumentParser(description="Question answering demo")
+    parser.add_argument("--share", action="store_true",
+                        help="also create a public gradio.live link (works while this program runs)")
+    parser.add_argument("--port", type=int, default=None, help="local port (default: 7860)")
+    args = parser.parse_args()
+    demo.launch(theme=gr.themes.Soft(), share=args.share, server_port=args.port)

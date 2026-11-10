@@ -32,3 +32,6 @@ Thumbs.db
 # Local Claude Code notes (not part of the project)
 CLAUDE.md
 .claude/
+
+# Created by Gradio when the demo runs with --share
+.gradio/
