@@ -210,6 +210,27 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     error analysis (T8).
   - Files in `results/`: `distilbert-squad2.json`, `distilbert-squad2_predictions.json` and
     `distilbert-squad2_train_summary.json` (settings and the 164 recorded losses, for the loss-curve figure).
+- **T7 (threshold sweep and efficiency), 2026-11-10.** New modules `src/threshold.py`, `src/predict.py` and
+  `src/benchmark.py`; 19 new unit tests, 88 in total.
+  - The sweep needs no model: it re-decides every question from the `best_span` and `score_diff` saved by
+    `src/evaluate.py`. At tau = 0 it reproduces the reported scores exactly (the script checks this).
+  - Both models do best with a NEGATIVE tau, which means abstaining more often than the default.
+    DistilBERT: best tau -1.38, F1 67.38 -> 68.30, answering 52% of questions instead of 60%. Answerable F1
+    falls from 72.2 to 66.3 while unanswerable F1 rises from 62.6 to 70.3. RoBERTa: best tau -1.64,
+    82.91 -> 83.50. The gain is small for both: the curve is flat around its peak.
+  - Honest number: picking tau on the same questions it is scored on flatters it. We split the 35 dev
+    articles into two halves, pick tau on one half and score the other. Cross-validated F1: DistilBERT
+    68.08 (the two halves picked -2.29 and -1.37), RoBERTa 83.44 (-1.51 and -1.64). Report 68.08, not 68.30.
+    The halves disagree by almost a point of tau for DistilBERT, which again says the peak is flat.
+  - `configs/distilbert.yaml` keeps `null_threshold: 0.0`, so the main results table stays at the default.
+    The demo slider can start at -1.4 for our model.
+  - `src/predict.py` has `answer_question(model, tokenizer, question, context, cfg)`: one question, same
+    functions as the evaluation, and a test that both paths give the same answer. The Gradio demo (T9)
+    and the long-document mode (T10) will call it.
+  - Efficiency, CPU only, one question at a time, 200 random dev questions, median, on David's Mac (Apple
+    M2, 4 threads): DistilBERT 66.4 M parameters / 265.5 MB / 31.2 ms; RoBERTa 124.1 M / 496.2 MB / 56.7 ms.
+    So ours is 54% of the size and 1.82 times as fast, for 15.5 fewer F1 points. Times will differ on the
+    Space's CPU; the ratio should hold roughly.
 
 ## Open questions
 

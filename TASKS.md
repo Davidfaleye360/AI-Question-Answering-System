@@ -40,7 +40,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
 
 ## Week 3: compare, analyze, build the demo
 
-- [ ] **T7. Threshold sweep and efficiency comparison** (A)
+- [x] **T7. Threshold sweep and efficiency comparison** (A) · _done on David's Mac on 2026-11-10. Best τ for our model is about −1.4: F1 67.38 → 68.08 cross-validated (68.30 if tuned on the whole dev set). Ours: 266 MB, 31 ms per question on CPU. RoBERTa: 496 MB, 57 ms. Figure: `results/threshold_sweep.png`._
   Sweep τ on the dev set and plot F1 against it. Measure CPU time per question and model size for both models.
 - [ ] **T8. Error analysis** (B)
   `notebooks/03_error_analysis.ipynb`: label at least 50 wrong predictions by type, break F1 down by question word and answer length.

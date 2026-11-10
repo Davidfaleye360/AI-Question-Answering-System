@@ -16,7 +16,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | --- | --- | --- |
 | 1 | Pipeline works on a small sample | Done |
 | 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
-| 3 | Demo online | Not started |
+| 3 | Demo online | In progress: threshold sweep and speed comparison done |
 | 4 | Report and presentation | Not started |
 
 See [TASKS.md](TASKS.md) for the full task list.
@@ -26,12 +26,28 @@ See [TASKS.md](TASKS.md) for the full task list.
 Scores on the SQuAD 2.0 dev set (11,873 questions), measured with `src/evaluate.py` at the default
 no-answer threshold (τ = 0). Our model is [Ingsyling/distilbert-squad2](https://huggingface.co/Ingsyling/distilbert-squad2)
 on the Hugging Face Hub. RoBERTa's model card reports 79.9 EM / 82.9 F1, which our measurement reproduces.
-Size and CPU time are measured in week 3.
+CPU time is the median time to answer one dev question end to end on an Apple M2 laptop (4 threads).
 
 | Model | EM | F1 | HasAns F1 | NoAns F1 | Size | CPU time / question |
 | --- | --- | --- | --- | --- | --- | --- |
-| DistilBERT (ours) | 64.14 | 67.38 | 72.17 | 62.59 | | |
-| RoBERTa (deepset) | 79.90 | 82.91 | 84.01 | 81.82 | | |
+| DistilBERT (ours) | 64.14 | 67.38 | 72.17 | 62.59 | 266 MB (66 M parameters) | 31 ms |
+| RoBERTa (deepset) | 79.90 | 82.91 | 84.01 | 81.82 | 496 MB (124 M parameters) | 57 ms |
+
+Our model is 15.5 F1 points behind RoBERTa at 54% of the size and 1.8 times the speed.
+
+### Tuning the no-answer threshold
+
+The model says "no answer" when the no-answer score beats its best span by more than τ. Lowering τ from 0
+to about −1.4 makes our model abstain more often and raises F1 from 67.38 to 68.08. That second number is
+cross-validated: τ is chosen on half of the dev articles and scored on the other half, so it is not flattered
+by tuning on the questions it is scored on (doing that gives 68.30).
+
+| Model | F1 at τ = 0 | Best τ | F1 at best τ (optimistic) | F1 cross-validated |
+| --- | --- | --- | --- | --- |
+| DistilBERT (ours) | 67.38 | −1.38 | 68.30 | 68.08 |
+| RoBERTa (deepset) | 82.91 | −1.64 | 83.50 | 83.44 |
+
+![F1 against the no-answer threshold](results/threshold_sweep.png)
 
 ## Repository layout
 
@@ -50,7 +66,10 @@ AI-Question-Answering-System/
 │   ├── explore.py              # dataset statistics for the exploration notebook
 │   ├── train.py                # fine-tuning with the Hugging Face Trainer
 │   ├── postprocess.py          # start/end scores -> answer text or "no answer"
-│   └── evaluate.py             # EM and F1 on the dev set, overall and HasAns / NoAns
+│   ├── evaluate.py             # EM and F1 on the dev set, overall and HasAns / NoAns
+│   ├── threshold.py            # sweep the no-answer threshold, plot F1 against it
+│   ├── predict.py              # answer one question (used by the demo and the benchmark)
+│   └── benchmark.py            # model size and CPU time per question
 ├── scripts/
 │   └── check_preprocessing.py  # sanity check: labels decode back to the right answers
 ├── notebooks/
@@ -64,10 +83,13 @@ AI-Question-Answering-System/
     ├── distilbert-squad2_predictions.json    # its answer and score for every dev question
     ├── distilbert-squad2_train_summary.json  # the full training run: settings and loss curve
     ├── roberta-base-squad2.json              # the same two files for RoBERTa
-    └── roberta-base-squad2_predictions.json
+    ├── roberta-base-squad2_predictions.json
+    ├── threshold_sweep.json                  # scores at every threshold, for both models
+    ├── threshold_sweep.png                   # the figure above
+    └── efficiency.json                       # size and CPU time per question
 ```
 
-Coming next: the threshold sweep, `notebooks/03_error_analysis.ipynb`, `app/app.py`.
+Coming next: `notebooks/03_error_analysis.ipynb`, `app/app.py`.
 
 ## Getting started
 
@@ -113,6 +135,14 @@ to only look at the first 20 questions and the model's answers:
 
 ```bash
 python -m src.evaluate --model deepset/roberta-base-squad2 --name roberta-base-squad2
+```
+
+Sweep the no-answer threshold (needs no model: it reads the saved predictions) and measure size and speed
+(about a minute; downloads both models the first time):
+
+```bash
+python -m src.threshold --models distilbert-squad2 roberta-base-squad2 --labels "DistilBERT (ours)" "RoBERTa (deepset)"
+python -m src.benchmark --models Ingsyling/distilbert-squad2 deepset/roberta-base-squad2
 ```
 
 ## How the pipeline works

@@ -1,0 +1,37 @@
+{
+  "what": "CPU time to answer one dev question end to end (tokenize, model, post-process), batch size 1",
+  "dataset": "rajpurkar/squad_v2 (validation), 200 random questions, seed 42",
+  "machine": {
+    "machine": "arm64",
+    "processor": "arm",
+    "system": "Darwin 27.2.0",
+    "torch": "2.15.0",
+    "cpu_threads": 4
+  },
+  "models": {
+    "Ingsyling/distilbert-squad2": {
+      "parameters_millions": 66.4,
+      "size_mb": 265.5,
+      "questions": 200,
+      "median_ms": 31.2,
+      "mean_ms": 36.0,
+      "p90_ms": 48.8,
+      "questions_per_second": 32.1
+    },
+    "deepset/roberta-base-squad2": {
+      "parameters_millions": 124.1,
+      "size_mb": 496.2,
+      "questions": 200,
+      "median_ms": 56.7,
+      "mean_ms": 62.1,
+      "p90_ms": 81.7,
+      "questions_per_second": 17.6
+    }
+  },
+  "compared_with_last_model": {
+    "Ingsyling/distilbert-squad2": {
+      "size_ratio": 0.54,
+      "speedup": 1.82
+    }
+  }
+}
