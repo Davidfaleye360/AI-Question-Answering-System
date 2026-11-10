@@ -15,7 +15,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | Week | Milestone | Status |
 | --- | --- | --- |
 | 1 | Pipeline works on a small sample | Done |
-| 2 | Model trained and scored | In progress: evaluation ready, full training run next |
+| 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
 | 3 | Demo online | Not started |
 | 4 | Report and presentation | Not started |
 
@@ -23,12 +23,14 @@ See [TASKS.md](TASKS.md) for the full task list.
 
 ## Results
 
-Scores on the SQuAD 2.0 dev set (11,873 questions). DistilBERT is filled in after the full training run.
-The RoBERTa row is our own measurement with `src/evaluate.py`; its model card reports 79.9 EM / 82.9 F1.
+Scores on the SQuAD 2.0 dev set (11,873 questions), measured with `src/evaluate.py` at the default
+no-answer threshold (τ = 0). Our model is [Ingsyling/distilbert-squad2](https://huggingface.co/Ingsyling/distilbert-squad2)
+on the Hugging Face Hub. RoBERTa's model card reports 79.9 EM / 82.9 F1, which our measurement reproduces.
+Size and CPU time are measured in week 3.
 
 | Model | EM | F1 | HasAns F1 | NoAns F1 | Size | CPU time / question |
 | --- | --- | --- | --- | --- | --- | --- |
-| DistilBERT (ours) | | | | | | |
+| DistilBERT (ours) | 64.14 | 67.38 | 72.17 | 62.59 | | |
 | RoBERTa (deepset) | 79.90 | 82.91 | 84.01 | 81.82 | | |
 
 ## Repository layout
@@ -58,11 +60,14 @@ AI-Question-Answering-System/
 ├── pytest.ini
 └── results/
     ├── data_stats.md           # dataset statistics from notebook 01
-    ├── roberta-base-squad2.json              # RoBERTa's scores on the dev set
-    └── roberta-base-squad2_predictions.json  # its answer and score for every dev question
+    ├── distilbert-squad2.json                # our model's scores on the dev set
+    ├── distilbert-squad2_predictions.json    # its answer and score for every dev question
+    ├── distilbert-squad2_train_summary.json  # the full training run: settings and loss curve
+    ├── roberta-base-squad2.json              # the same two files for RoBERTa
+    └── roberta-base-squad2_predictions.json
 ```
 
-Coming next: the full training run, `notebooks/03_error_analysis.ipynb`, `app/app.py`.
+Coming next: the threshold sweep, `notebooks/03_error_analysis.ipynb`, `app/app.py`.
 
 ## Getting started
 
@@ -118,7 +123,7 @@ python -m src.evaluate --model deepset/roberta-base-squad2 --name roberta-base-s
    start and end token labels. Unanswerable questions, and windows that don't contain the whole answer,
    are labeled `(0, 0)`, which points at the `[CLS]` token.
 3. **Train** (`src/train.py`): fine-tune DistilBERT with the Hugging Face `Trainer`, saving checkpoints
-   along the way so a run can continue after a Colab disconnect. The full run (2 epochs, about 2.5 hours
+   along the way so a run can continue after a Colab disconnect. The full run (2 epochs, 16,470 steps, 44 minutes
    on a T4) is in `notebooks/02_train_colab.ipynb`: checkpoints go to Google Drive and the finished model
    is uploaded to the Hugging Face Hub as `Ingsyling/distilbert-squad2`.
 4. **Post-process** (`src/postprocess.py`): the model gives every token a start score and an end score.

@@ -195,6 +195,21 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
   - Notebook 02 now has a Part B (sections 6-8): connect Drive and read the token, train, plot the loss,
     score on the dev set with `src/evaluate.py`.
   - 69 offline unit tests (4 new; the Hub is replaced by a fake object, so no test uses the internet).
+- **T6 result, 2026-11-10 (David, Colab, Tesla T4, fp16).** 130,319 questions became 131,754 windows; 2 epochs
+  = 16,470 steps in 2,616 s (44 minutes, about 6.3 steps per second: much faster than the 2.7 hours guessed
+  from the smoke test, whose 30 seconds were mostly start-up). Loss 5.81 at step 100, about 1.2 at the end
+  of epoch 1, about 0.9 at the end of epoch 2. The visible drop at step 8,300 is the start of the second
+  epoch: the model sees the same questions again. `RESULT: PASS`, uploaded to
+  https://huggingface.co/Ingsyling/distilbert-squad2 (final model and tokenizer, no checkpoints).
+  - Dev set at tau = 0: **EM 64.14, F1 67.38**. Answerable: EM 65.69, F1 72.17. Unanswerable: 62.59.
+    The 65 F1 target is met. Scoring the uploaded model on David's Mac gave identical numbers, so the
+    upload is the model that was trained.
+  - Against RoBERTa (79.90 / 82.91): 15.5 F1 points lower overall. The gap is larger on unanswerable
+    questions (19.2 points) than on answerable ones (11.8), so knowing when NOT to answer is where the
+    smaller model loses most. That is the first thing to look at in the threshold sweep (T7) and the
+    error analysis (T8).
+  - Files in `results/`: `distilbert-squad2.json`, `distilbert-squad2_predictions.json` and
+    `distilbert-squad2_train_summary.json` (settings and the 164 recorded losses, for the loss-curve figure).
 
 ## Open questions
 
