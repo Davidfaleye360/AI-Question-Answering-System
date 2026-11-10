@@ -14,8 +14,8 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 
 | Week | Milestone | Status |
 | --- | --- | --- |
-| 1 | Pipeline works on a small sample | In progress |
-| 2 | Model trained and scored | Not started |
+| 1 | Pipeline works on a small sample | Done |
+| 2 | Model trained and scored | In progress: evaluation ready, full training run next |
 | 3 | Demo online | Not started |
 | 4 | Report and presentation | Not started |
 
@@ -23,12 +23,13 @@ See [TASKS.md](TASKS.md) for the full task list.
 
 ## Results
 
-_To be filled in after training (week 2)._
+Scores on the SQuAD 2.0 dev set (11,873 questions). DistilBERT is filled in after the full training run.
+The RoBERTa row is our own measurement with `src/evaluate.py`; its model card reports 79.9 EM / 82.9 F1.
 
 | Model | EM | F1 | HasAns F1 | NoAns F1 | Size | CPU time / question |
 | --- | --- | --- | --- | --- | --- | --- |
 | DistilBERT (ours) | | | | | | |
-| RoBERTa (deepset) | | | | | | |
+| RoBERTa (deepset) | 79.90 | 82.91 | 84.01 | 81.82 | | |
 
 ## Repository layout
 
@@ -45,7 +46,9 @@ AI-Question-Answering-System/
 │   ├── data.py                 # loads SQuAD 2.0
 │   ├── preprocess.py           # tokenization, windows, start/end labels
 │   ├── explore.py              # dataset statistics for the exploration notebook
-│   └── train.py                # fine-tuning with the Hugging Face Trainer
+│   ├── train.py                # fine-tuning with the Hugging Face Trainer
+│   ├── postprocess.py          # start/end scores -> answer text or "no answer"
+│   └── evaluate.py             # EM and F1 on the dev set, overall and HasAns / NoAns
 ├── scripts/
 │   └── check_preprocessing.py  # sanity check: labels decode back to the right answers
 ├── notebooks/
@@ -54,10 +57,12 @@ AI-Question-Answering-System/
 ├── tests/                      # unit tests (no internet or GPU needed)
 ├── pytest.ini
 └── results/
-    └── data_stats.md           # dataset statistics from notebook 01 (more results added later)
+    ├── data_stats.md           # dataset statistics from notebook 01
+    ├── roberta-base-squad2.json              # RoBERTa's scores on the dev set
+    └── roberta-base-squad2_predictions.json  # its answer and score for every dev question
 ```
 
-Coming next: `src/postprocess.py`, `src/evaluate.py`, `notebooks/03_error_analysis.ipynb`, `app/app.py`.
+Coming next: the full training run, `notebooks/03_error_analysis.ipynb`, `app/app.py`.
 
 ## Getting started
 
@@ -97,6 +102,14 @@ if the loss went down and the model was saved:
 python -m src.train --config configs/distilbert.yaml --overrides configs/smoke.yaml --fresh
 ```
 
+Score a model on the dev set. This downloads the model the first time (about 500 MB for RoBERTa), takes
+about 6 minutes on an M2 MacBook, and writes two files to `results/`. Add `--limit 20 --show 20 --no-save`
+to only look at the first 20 questions and the model's answers:
+
+```bash
+python -m src.evaluate --model deepset/roberta-base-squad2 --name roberta-base-squad2
+```
+
 ## How the pipeline works
 
 1. **Load** SQuAD 2.0 from the Hugging Face Hub (`rajpurkar/squad_v2`).
@@ -106,8 +119,12 @@ python -m src.train --config configs/distilbert.yaml --overrides configs/smoke.y
    are labeled `(0, 0)`, which points at the `[CLS]` token.
 3. **Train** (`src/train.py`): fine-tune DistilBERT with the Hugging Face `Trainer`, saving checkpoints
    along the way so a run can continue after a Colab disconnect. The full run comes in week 2.
-4. **Post-process** start and end scores into answer text, with a tunable no-answer threshold (week 2).
-5. **Evaluate** with the official SQuAD 2.0 metric: Exact Match and F1 (week 2).
+4. **Post-process** (`src/postprocess.py`): the model gives every token a start score and an end score.
+   The best answer is the span with the highest start + end score, among spans that lie inside the passage
+   and are at most 30 tokens long. "No answer" has a score too (the `[CLS]` token), and the model abstains
+   when that score beats the best span by more than a threshold τ.
+5. **Evaluate** (`src/evaluate.py`): Exact Match and F1 on the dev set, overall and separately for
+   answerable (HasAns) and unanswerable (NoAns) questions, checked against the official SQuAD 2.0 metric.
 
 ## Configuration
 

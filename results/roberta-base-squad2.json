@@ -1,0 +1,27 @@
+{
+  "model": "deepset/roberta-base-squad2",
+  "dataset": "rajpurkar/squad_v2 (validation)",
+  "questions": 11873,
+  "windows": 12165,
+  "device": "mps",
+  "predict_seconds": 347.8,
+  "settings": {
+    "max_length": 384,
+    "doc_stride": 128,
+    "n_best": 20,
+    "max_answer_length": 30,
+    "null_threshold": 0.0
+  },
+  "metrics": {
+    "exact": 79.9,
+    "f1": 82.91,
+    "total": 11873,
+    "HasAns_exact": 77.99,
+    "HasAns_f1": 84.01,
+    "HasAns_total": 5928,
+    "NoAns_exact": 81.82,
+    "NoAns_f1": 81.82,
+    "NoAns_total": 5945
+  },
+  "matches_official_metric": true
+}

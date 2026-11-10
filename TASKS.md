@@ -26,10 +26,10 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
 
 ## Week 2: train and start evaluating
 
-- [ ] **T4. Post-processing** (B)
+- [x] **T4. Post-processing** (B) · _done on David's Mac on 2026-11-10: 10 unit tests pass, and RoBERTa's answers on the first 20 dev questions look right (16 of 20 exact; run `python -m src.evaluate --model deepset/roberta-base-squad2 --limit 20 --show 20 --no-save` to see them)._
   `src/postprocess.py`: turn start/end scores into answer text, with n-best spans, max answer length and the no-answer threshold τ.
   _Done when:_ unit tests pass and the RoBERTa checkpoint's predictions look right on 20 dev questions.
-- [ ] **T5. Evaluation script** (B)
+- [x] **T5. Evaluation script** (B) · _done on David's Mac on 2026-11-10: RoBERTa scores 79.90 EM / 82.91 F1 on all 11,873 dev questions (published: 79.9 / 82.9), and our numbers equal the official `squad_v2` metric's. Results are in `results/roberta-base-squad2.json`._
   `src/evaluate.py`: EM, F1, HasAns and NoAns with the official `squad_v2` metric; writes `results/*.json`.
   _Done when:_ RoBERTa scores close to its published 79.9 EM / 82.9 F1 on the dev set.
 - [ ] **T6. Full training run** (A)

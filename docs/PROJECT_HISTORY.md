@@ -159,6 +159,29 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
       which means "no answer". That is expected: it has seen 0.6 of an epoch of 1% of the data.
 - 37 offline unit tests now (12 new for training and config overrides), including a 4-step training run of a
   1-layer DistilBERT that checks checkpoints, the saved model and resuming.
+- **T4 (post-processing) and T5 (evaluation), 2026-11-10.** Wrote `src/postprocess.py` and `src/evaluate.py`
+  with 28 new unit tests (65 in total, still offline and about 5 seconds). Design decisions:
+  - Span score = start score + end score. Per window we try the 20 best starts with the 20 best ends and
+    drop spans outside the passage, running backwards, or longer than 30 tokens.
+  - "No answer" score = start + end score of the first token ([CLS]). For a passage with several windows we
+    take the lowest one, so a window that sees the answer can overrule windows that don't. The model
+    abstains when `null score - best span score > tau`; tau stays 0.0 until the sweep in T7.
+  - That difference (`score_diff`) is saved for every question in `results/<name>_predictions.json`,
+    together with the best span, so T7 can sweep tau and T8 can do error analysis without running the
+    model again (`apply_threshold` in `src/postprocess.py`).
+  - EM and F1 are written out in `src/evaluate.py` (same rules as the official script) because we need a
+    score per question for the error analysis and because we have to explain them in the presentation.
+    The script also runs the official `squad_v2` metric and stops if the two disagree.
+  - The model is run with a plain PyTorch loop instead of `Trainer.predict`: fewer moving parts to explain.
+    Each batch is cut at its longest real window, since most passages are far shorter than 384 tokens.
+  - Result on the full dev set with `deepset/roberta-base-squad2` (David's Mac, `mps`, 348 s for 12,165
+    windows): EM 79.90, F1 82.91 (published 79.9 / 82.9). Answerable: EM 77.99, F1 84.01. Unanswerable:
+    81.82. This is the baseline row of the results table, and it shows our preprocessing, post-processing
+    and scoring are right before we trust them on our own model.
+  - On the first 20 dev questions RoBERTa got 16 exactly right. The 4 misses are the kinds of errors to
+    expect in T8: abstaining by a hair on an answerable question ("Rollo", null score ahead by 0.31), a
+    span that is too long ("Richard I of Normandy" for "Richard I"), a near-synonym ("Christian" for
+    "Catholic"), and answering a trick question (the "country of Normandy").
 
 ## Open questions
 
