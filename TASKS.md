@@ -18,7 +18,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
 - [x] **T2. Explore the data and try a ready-made model** (B) · _ran top to bottom on David's Mac (CPU) on 2026-11-09, no errors; numbers are in `results/data_stats.md`. RoBERTa on 50 dev questions: EM 80.0, F1 82.7. Not yet run in Colab._
   Run `notebooks/01_explore_data.ipynb` in Colab. Record dataset stats and the RoBERTa baseline on 50 dev questions.
   _Done when:_ the notebook runs top to bottom and the numbers are copied into `results/data_stats.md`.
-- [ ] **T3. Smoke-test training** (A) · _code written (`src/train.py`, `configs/smoke.yaml`, `notebooks/02_train_colab.ipynb`) and passing on David's Mac on 2026-11-09: loss 5.86 → 3.58 in 50 steps, two checkpoints and the final model saved. To finish: run notebook 02 in Colab on a T4 GPU, which is the first test of fp16 and of the Colab setup cell._
+- [x] **T3. Smoke-test training** (A) · _`RESULT: PASS` in Colab on a Tesla T4 with fp16 on 2026-11-10 (run by David): loss 5.86 → 3.58 in 50 steps, 30 seconds, two checkpoints and the final model saved. It passed on David's Mac the day before too. Code: `src/train.py`, `configs/smoke.yaml`, `notebooks/02_train_colab.ipynb`._
   Train DistilBERT on 1% of the training data for about 50 steps in Colab.
   _Done when:_ the loss goes down and a checkpoint saves without errors.
 

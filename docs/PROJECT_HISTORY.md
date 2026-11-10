@@ -142,8 +142,21 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     step 5 (a blind guess among 384 positions is ln 384 ≈ 5.95) down to 3.58 at step 50; `checkpoint-25`,
     `checkpoint-50` and the final model saved; the saved model loads in a `question-answering` pipeline.
     It took 472 s, so anything bigger than the smoke test belongs on Colab.
-  - Still to do for T3: run notebook 02 in Colab on a T4. That is the first test of fp16 and of the Colab
-    setup cell (`pip install -r requirements.txt` over Colab's preinstalled packages).
+  - Colab result (2026-11-10, David, Tesla T4, fp16 on): `RESULT: PASS`. Same 1,324 windows; loss 5.860 at
+    step 5 down to 3.584 at step 50, almost identical to the Mac run; 50 steps in 30 s (1.7 steps per second,
+    about 16 times faster than the Mac). Colab resolved transformers 4.57.6, datasets 4.8.5, torch 2.14.1+cu130.
+    What we learned for the full run (T6):
+    - The setup cell prints a red pip `ERROR` saying `diffusers` wants a newer `huggingface-hub`. It is
+      harmless: Colab preinstalls `diffusers`, we never use it, and transformers 4.x needs the older hub.
+    - The TensorFlow lines at the top of the training cell ("Could not find cuda drivers") come from
+      TensorFlow being imported in the background, not from PyTorch. The line that counts is
+      `device: cuda:0, fp16: True`.
+    - Each checkpoint is 797 MB (model plus optimizer state) and the final model is 266 MB, so with
+      `save_total_limit: 2` the full run needs about 1.9 GB of Google Drive space.
+    - At the smoke test's speed the full run (about 16,500 steps) would take roughly 2.7 hours. Treat that
+      as an upper estimate; the first steps of a run are the slowest.
+    - After 50 steps the saved model answers the notebook's test question with an empty string (score 0.20),
+      which means "no answer". That is expected: it has seen 0.6 of an epoch of 1% of the data.
 - 37 offline unit tests now (12 new for training and config overrides), including a 4-step training run of a
   1-layer DistilBERT that checks checkpoints, the saved model and resuming.
 
