@@ -44,7 +44,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
   Sweep τ on the dev set and plot F1 against it. Measure CPU time per question and model size for both models.
 - [ ] **T8. Error analysis** (B)
   `notebooks/03_error_analysis.ipynb`: label at least 50 wrong predictions by type, break F1 down by question word and answer length.
-- [ ] **T9. Gradio demo** (B)
+- [ ] **T9. Gradio demo** (B) · _written and tried locally on 2026-11-10 (`python app/app.py`): both models answer, the slider flips answers without re-running the model, the model switch works. To finish: deploy with `python scripts/deploy_space.py` (needs a Hugging Face login) and check the Space online._
   `app/app.py`: passage and question inputs, highlighted answer, top candidates, threshold slider, model switch. Deploy to a Hugging Face Space.
 
 **Milestone: demo online.**

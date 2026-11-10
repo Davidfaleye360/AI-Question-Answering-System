@@ -231,6 +231,28 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     M2, 4 threads): DistilBERT 66.4 M parameters / 265.5 MB / 31.2 ms; RoBERTa 124.1 M / 496.2 MB / 56.7 ms.
     So ours is 54% of the size and 1.82 times as fast, for 15.5 fewer F1 points. Times will differ on the
     Space's CPU; the ratio should hold roughly.
+- **T9 (Gradio demo), written 2026-11-10; deployment still to do.** New: `src/demo.py`, `app/app.py`,
+  `app/README.md`, `app/requirements.txt`, `scripts/deploy_space.py`; 14 new unit tests, 102 in total.
+  - Split in two on purpose. `src/demo.py` decides what is shown and has no Gradio code, so it is tested;
+    `app/app.py` only lays out the screen.
+  - The model runs once per question (`ask`) and its scores are kept in the visitor's session. Moving the
+    threshold slider only re-decides from those scores (`render`), so the answer flips instantly. That is
+    the clearest way to show what tau does in the presentation.
+  - When the model abstains, the passage still shows its best guess in grey, with a sentence saying by how
+    much "no answer" won and which threshold would flip it.
+  - The "confidence" column is a softmax over the five listed spans and "no answer". It is a guide, not a
+    calibrated probability, and the app's code says so.
+  - Slider defaults are the tuned thresholds from T7: -1.4 for DistilBERT, -1.6 for RoBERTa.
+  - Tried in a browser on David's Mac. Good material for the live demo, same Normans passage:
+    "What is France a region of?" (no answer in the passage) - our model confidently says "Normandy",
+    RoBERTa correctly abstains. And on the oxygen passage, "Which element is the most abundant in the
+    universe by mass?": our model abstains at -1.4 and answers "oxygen" (wrong) once the slider passes -1.14.
+  - First answer takes about 0.5 s for DistilBERT and 1.1 s for RoBERTa on the Mac, including set-up;
+    the model itself needs 31 / 57 ms (T7).
+  - Deployment: `scripts/deploy_space.py` copies the app, the five `src/` modules it needs, the config
+    and a CPU-only requirements file into the layout a Space expects and uploads it to
+    `Ingsyling/squad2-qa-demo`. A test follows the app's imports and fails if a needed module isn't copied.
+    A dry run and an import of the copied app both work; the real upload needs David's Hugging Face login.
 
 ## Open questions
 

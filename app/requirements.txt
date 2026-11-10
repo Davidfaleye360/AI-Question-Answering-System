@@ -1,0 +1,7 @@
+# Requirements of the demo Space only (the project's own list is requirements.txt in the repo root).
+# The Space has no GPU, so install the much smaller CPU-only build of PyTorch.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.1
+transformers>=4.46,<5
+pyyaml>=6.0
+numpy>=1.26

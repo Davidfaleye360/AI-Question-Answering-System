@@ -16,7 +16,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | --- | --- | --- |
 | 1 | Pipeline works on a small sample | Done |
 | 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
-| 3 | Demo online | In progress: threshold sweep and speed comparison done |
+| 3 | Demo online | In progress: demo runs locally, not deployed yet; error analysis to do |
 | 4 | Report and presentation | Not started |
 
 See [TASKS.md](TASKS.md) for the full task list.
@@ -69,9 +69,15 @@ AI-Question-Answering-System/
 │   ├── evaluate.py             # EM and F1 on the dev set, overall and HasAns / NoAns
 │   ├── threshold.py            # sweep the no-answer threshold, plot F1 against it
 │   ├── predict.py              # answer one question (used by the demo and the benchmark)
-│   └── benchmark.py            # model size and CPU time per question
+│   ├── benchmark.py            # model size and CPU time per question
+│   └── demo.py                 # what the demo shows (no user-interface code)
+├── app/
+│   ├── app.py                  # the Gradio demo screen
+│   ├── README.md               # settings and description of the Hugging Face Space
+│   └── requirements.txt        # what the Space installs
 ├── scripts/
-│   └── check_preprocessing.py  # sanity check: labels decode back to the right answers
+│   ├── check_preprocessing.py  # sanity check: labels decode back to the right answers
+│   └── deploy_space.py         # copies the demo to a Hugging Face Space
 ├── notebooks/
 │   ├── 01_explore_data.ipynb   # dataset stats + a ready-made model as a baseline
 │   └── 02_train_colab.ipynb    # training in Colab: smoke test, full run, dev-set score
@@ -89,7 +95,7 @@ AI-Question-Answering-System/
     └── efficiency.json                       # size and CPU time per question
 ```
 
-Coming next: `notebooks/03_error_analysis.ipynb`, `app/app.py`.
+Coming next: `notebooks/03_error_analysis.ipynb`, the long-document mode.
 
 ## Getting started
 
@@ -144,6 +150,25 @@ Sweep the no-answer threshold (needs no model: it reads the saved predictions) a
 python -m src.threshold --models distilbert-squad2 roberta-base-squad2 --labels "DistilBERT (ours)" "RoBERTa (deepset)"
 python -m src.benchmark --models Ingsyling/distilbert-squad2 deepset/roberta-base-squad2
 ```
+
+Run the demo on your own computer. It downloads our model the first time (about 270 MB) and opens at
+http://127.0.0.1:7860:
+
+```bash
+python app/app.py
+```
+
+## The demo
+
+`app/app.py` is a Gradio app. You paste a passage and ask a question, and it shows:
+
+- the answer, or "No answer found in the passage"
+- the passage with the answer highlighted (when the model abstains, its rejected best guess is shown in grey)
+- the top five candidate spans and "no answer", with their scores
+- a threshold slider: moving it re-decides instantly from the same scores, without running the model again
+- a switch between our DistilBERT and the RoBERTa baseline
+
+Long passages work too: they are read in overlapping windows, like in training.
 
 ## How the pipeline works
 
