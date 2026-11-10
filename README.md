@@ -53,7 +53,7 @@ AI-Question-Answering-System/
 │   └── check_preprocessing.py  # sanity check: labels decode back to the right answers
 ├── notebooks/
 │   ├── 01_explore_data.ipynb   # dataset stats + a ready-made model as a baseline
-│   └── 02_train_colab.ipynb    # training in Colab (smoke test now, full run later)
+│   └── 02_train_colab.ipynb    # training in Colab: smoke test, full run, dev-set score
 ├── tests/                      # unit tests (no internet or GPU needed)
 ├── pytest.ini
 └── results/
@@ -118,7 +118,9 @@ python -m src.evaluate --model deepset/roberta-base-squad2 --name roberta-base-s
    start and end token labels. Unanswerable questions, and windows that don't contain the whole answer,
    are labeled `(0, 0)`, which points at the `[CLS]` token.
 3. **Train** (`src/train.py`): fine-tune DistilBERT with the Hugging Face `Trainer`, saving checkpoints
-   along the way so a run can continue after a Colab disconnect. The full run comes in week 2.
+   along the way so a run can continue after a Colab disconnect. The full run (2 epochs, about 2.5 hours
+   on a T4) is in `notebooks/02_train_colab.ipynb`: checkpoints go to Google Drive and the finished model
+   is uploaded to the Hugging Face Hub as `Ingsyling/distilbert-squad2`.
 4. **Post-process** (`src/postprocess.py`): the model gives every token a start score and an end score.
    The best answer is the span with the highest start + end score, among spans that lie inside the passage
    and are at most 30 tokens long. "No answer" has a score too (the `[CLS]` token), and the model abstains

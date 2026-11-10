@@ -182,6 +182,19 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     expect in T8: abstaining by a hair on an answerable question ("Rollo", null score ahead by 0.31), a
     span that is too long ("Richard I of Normandy" for "Richard I"), a near-synonym ("Christian" for
     "Catholic"), and answering a trick question (the "country of Normandy").
+- **T6 (full training run), code written 2026-11-10; the run itself is still to do.**
+  - The model goes to the Hugging Face Hub as `Ingsyling/distilbert-squad2` (David's account), public, so the
+    demo Space and anyone checking our results can load it.
+  - `python -m src.train ... --push-to-hub` creates the model page BEFORE training starts. A missing or
+    read-only token therefore fails in seconds instead of after 2.5 hours on the GPU. The upload happens only
+    if the run ends with `RESULT: PASS`, and leaves out the checkpoints (800 MB each, only useful for resuming).
+  - The token is never written down: Colab keeps it as a secret named `HF_TOKEN`, the notebook copies it
+    into an environment variable, and the Hub library reads it from there. The repo is public.
+  - Checkpoints go to Google Drive (`MyDrive/qa-project/distilbert-squad2`) through `--output-dir`. Running
+    the training cell again after a disconnect resumes from the newest checkpoint.
+  - Notebook 02 now has a Part B (sections 6-8): connect Drive and read the token, train, plot the loss,
+    score on the dev set with `src/evaluate.py`.
+  - 69 offline unit tests (4 new; the Hub is replaced by a fake object, so no test uses the internet).
 
 ## Open questions
 

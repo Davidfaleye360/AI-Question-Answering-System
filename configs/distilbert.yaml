@@ -3,7 +3,7 @@
 
 model:
   checkpoint: distilbert-base-uncased       # pretrained model to start from
-  hub_model_id: null                        # e.g. your-username/distilbert-squad2 (set before pushing)
+  hub_model_id: Ingsyling/distilbert-squad2 # where --push-to-hub uploads the trained model
 
 data:
   dataset_name: rajpurkar/squad_v2

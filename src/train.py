@@ -3,8 +3,8 @@
     # Smoke test (T3): 50 steps on 1% of the data, a few minutes at most
     python -m src.train --config configs/distilbert.yaml --overrides configs/smoke.yaml
 
-    # Full run (T6): 2 epochs on all of the data, on a GPU
-    python -m src.train --config configs/distilbert.yaml
+    # Full run (T6): 2 epochs on all of the data, on a GPU, saved to Google Drive and uploaded
+    python -m src.train --config configs/distilbert.yaml --output-dir /content/drive/MyDrive/... --push-to-hub
 
 What happens:
   1. Load the pretrained model. It gets a new, untrained "QA head": one small layer that
@@ -13,6 +13,8 @@ What happens:
   3. Train with the Hugging Face Trainer. The loss measures how far the predicted start and
      end positions are from the labels, so it should fall as the model learns.
   4. Save checkpoints along the way (a Colab session can disconnect), then the final model.
+  5. With --push-to-hub, upload the final model to the Hugging Face Hub (model.hub_model_id in
+     the config), so the demo and the evaluation can load it from anywhere.
 
 The run ends with "RESULT: PASS" if the loss went down and a checkpoint and the final model
 were saved. That is what the smoke test checks before we spend hours on the full run.
@@ -41,6 +43,10 @@ from src.data import take_fraction
 from src.preprocess import prepare_train_features
 
 SUMMARY_FILE = "train_summary.json"
+
+# Not uploaded to the Hub: checkpoints hold the optimizer state and are only useful for resuming
+# (about 800 MB each), and training_args.bin is a pickled Python object nobody needs to download.
+HUB_IGNORE = ["checkpoint-*", "training_args.bin"]
 
 
 def make_train_features(raw_train, tokenizer, pre: PreprocessingConfig):
@@ -149,6 +155,44 @@ def run_training(model, tokenizer, train_features, cfg: Config, resume: bool = T
     return summary
 
 
+def _hub_api(api=None):
+    """The Hugging Face Hub client. It reads the access token from the HF_TOKEN environment variable."""
+    if api is not None:
+        return api
+    from huggingface_hub import HfApi
+
+    return HfApi()
+
+
+def prepare_hub_repo(hub_model_id: str | None, api=None) -> str:
+    """Make sure we can upload to `hub_model_id`, creating the model page if it doesn't exist.
+
+    Called BEFORE training, so a missing or read-only token fails in seconds instead of
+    after hours on the GPU. Returns the page's URL.
+    """
+    if not hub_model_id:
+        raise ValueError("--push-to-hub needs model.hub_model_id in the config, e.g. your-username/distilbert-squad2")
+    try:
+        return str(_hub_api(api).create_repo(hub_model_id, repo_type="model", exist_ok=True))
+    except Exception as error:
+        raise RuntimeError(
+            f"Can't create or open {hub_model_id} on the Hugging Face Hub. Check that the HF_TOKEN "
+            f"environment variable holds an access token with WRITE permission for that account.\n{error}"
+        ) from error
+
+
+def push_to_hub(out_dir: str | Path, hub_model_id: str, steps: int, api=None) -> str:
+    """Upload the final model, tokenizer and training summary (not the checkpoints). Returns the URL."""
+    _hub_api(api).upload_folder(
+        folder_path=str(out_dir),
+        repo_id=hub_model_id,
+        repo_type="model",
+        ignore_patterns=HUB_IGNORE,
+        commit_message=f"Fine-tuned on SQuAD 2.0 ({steps:,} steps)",
+    )
+    return f"https://huggingface.co/{hub_model_id}"
+
+
 def print_summary(summary: dict) -> None:
     """Print what happened in the run, ending with RESULT: PASS or FAIL."""
     print(f"\nTrained {summary['steps']:,} steps on {summary['train_windows']:,} windows "
@@ -170,6 +214,8 @@ def main() -> int:
     parser.add_argument("--output-dir", default=None, help="where to save, e.g. a Google Drive folder (replaces training.output_dir)")
     parser.add_argument("--fresh", action="store_true", help="start from step 0 even if the output folder has checkpoints")
     parser.add_argument("--cpu", action="store_true", help="train on the CPU even if a GPU is available")
+    parser.add_argument("--push-to-hub", action="store_true",
+                        help="upload the final model to model.hub_model_id (needs a write token in HF_TOKEN)")
     args = parser.parse_args()
 
     cfg = load_config(args.config, args.overrides)
@@ -179,6 +225,9 @@ def main() -> int:
     length = f"{t.max_steps} steps" if t.max_steps > 0 else f"{t.num_epochs} epochs"
     print(f"Model: {cfg.model.checkpoint} | {cfg.data.train_fraction:.0%} of the training data | {length} "
           f"| batch {t.batch_size} | lr {t.learning_rate} | saving to {t.output_dir}\n")
+
+    if args.push_to_hub:
+        print(f"Will upload to {prepare_hub_repo(cfg.model.hub_model_id)} when training has finished.\n")
 
     # The QA head starts from random numbers. Fixing the seed makes two runs give the same result.
     set_seed(t.seed)
@@ -191,6 +240,11 @@ def main() -> int:
 
     summary = run_training(model, tokenizer, train_features, cfg, resume=not args.fresh, use_cpu=args.cpu)
     print_summary(summary)
+
+    if args.push_to_hub and summary["passed"]:
+        print("Uploaded to", push_to_hub(t.output_dir, cfg.model.hub_model_id, summary["steps"]))
+    elif args.push_to_hub:
+        print("Not uploaded: the run did not pass. The files are still in", t.output_dir)
     return 0 if summary["passed"] else 1
 
 

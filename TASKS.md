@@ -32,7 +32,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
 - [x] **T5. Evaluation script** (B) · _done on David's Mac on 2026-11-10: RoBERTa scores 79.90 EM / 82.91 F1 on all 11,873 dev questions (published: 79.9 / 82.9), and our numbers equal the official `squad_v2` metric's. Results are in `results/roberta-base-squad2.json`._
   `src/evaluate.py`: EM, F1, HasAns and NoAns with the official `squad_v2` metric; writes `results/*.json`.
   _Done when:_ RoBERTa scores close to its published 79.9 EM / 82.9 F1 on the dev set.
-- [ ] **T6. Full training run** (A)
+- [ ] **T6. Full training run** (A) · _code ready on 2026-11-10: `--push-to-hub` in `src/train.py` and sections 6–8 of notebook 02 (Drive checkpoints, Hub upload to `Ingsyling/distilbert-squad2`, dev-set score). To finish: run those sections in Colab on a T4, about 2.5 hours._
   `src/train.py` + `notebooks/02_train_colab.ipynb`: 2 epochs on all of SQuAD 2.0, checkpoints to Google Drive, final model pushed to the Hugging Face Hub.
   _Done when:_ the model is on the Hub and its dev F1 is recorded.
 
