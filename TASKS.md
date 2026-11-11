@@ -42,7 +42,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
 
 - [x] **T7. Threshold sweep and efficiency comparison** (A) · _done on David's Mac on 2026-11-10. Best τ for our model is about −1.4: F1 67.38 → 68.08 cross-validated (68.30 if tuned on the whole dev set). Ours: 266 MB, 31 ms per question on CPU. RoBERTa: 496 MB, 57 ms. Figure: `results/threshold_sweep.png`._
   Sweep τ on the dev set and plot F1 against it. Measure CPU time per question and model size for both models.
-- [ ] **T8. Error analysis** (B)
+- [x] **T8. Error analysis** (B) · _done on 2026-11-11: `src/errors.py` and `notebooks/03_error_analysis.ipynb`. Error types for all 11,873 questions (76% of our model's errors are answer / no-answer decisions), F1 by question word and answer length, and 60 sampled errors labelled by hand in `results/error_sample.csv`; the labels were proposed during development and read by David._
   `notebooks/03_error_analysis.ipynb`: label at least 50 wrong predictions by type, break F1 down by question word and answer length.
 - [x] **T9. Gradio demo** (B) · _done on 2026-11-10. `python app/app.py` runs it locally; `--share` gives a public `gradio.live` link (tested from David's Mac). **Not on a Hugging Face Space:** Hugging Face now requires a paid PRO plan for Gradio Spaces, so we start the demo on demand instead, from `notebooks/04_demo_colab.ipynb` or a laptop (David's decision). Still to check: notebook 04 has not been run in Colab yet._
   `app/app.py`: passage and question inputs, highlighted answer, top candidates, threshold slider, model switch. Deploy to a Hugging Face Space.

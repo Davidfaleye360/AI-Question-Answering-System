@@ -1,0 +1,359 @@
+{
+ "dataset": "rajpurkar/squad_v2 (validation)",
+ "models": {
+  "distilbert-squad2": {
+   "questions": 11873,
+   "errors": 4258,
+   "outcomes": {
+    "correct": 7615,
+    "false answer": 2224,
+    "missed answer": 1033,
+    "too long": 341,
+    "too short": 232,
+    "partial overlap": 89,
+    "wrong span": 339
+   },
+   "error_shares_pct": {
+    "false answer": 52.2,
+    "missed answer": 24.3,
+    "too long": 8.0,
+    "too short": 5.4,
+    "partial overlap": 2.1,
+    "wrong span": 8.0
+   },
+   "by_question_type_answerable": [
+    {
+     "question_type": "what",
+     "questions": 3618,
+     "exact": 63.76,
+     "f1": 69.94
+    },
+    {
+     "question_type": "who",
+     "questions": 517,
+     "exact": 71.95,
+     "f1": 75.32
+    },
+    {
+     "question_type": "when",
+     "questions": 396,
+     "exact": 82.32,
+     "f1": 84.21
+    },
+    {
+     "question_type": "which",
+     "questions": 330,
+     "exact": 72.42,
+     "f1": 77.23
+    },
+    {
+     "question_type": "how many",
+     "questions": 315,
+     "exact": 80.95,
+     "f1": 84.98
+    },
+    {
+     "question_type": "where",
+     "questions": 255,
+     "exact": 62.35,
+     "f1": 71.11
+    },
+    {
+     "question_type": "how",
+     "questions": 243,
+     "exact": 43.62,
+     "f1": 64.18
+    },
+    {
+     "question_type": "why",
+     "questions": 100,
+     "exact": 40.0,
+     "f1": 58.68
+    },
+    {
+     "question_type": "how much",
+     "questions": 89,
+     "exact": 70.79,
+     "f1": 77.99
+    },
+    {
+     "question_type": "other",
+     "questions": 65,
+     "exact": 41.54,
+     "f1": 57.58
+    }
+   ],
+   "by_question_type_all": [
+    {
+     "question_type": "what",
+     "questions": 7431,
+     "exact": 64.49,
+     "f1": 67.49
+    },
+    {
+     "question_type": "who",
+     "questions": 1119,
+     "exact": 63.18,
+     "f1": 64.74
+    },
+    {
+     "question_type": "when",
+     "questions": 758,
+     "exact": 70.58,
+     "f1": 71.56
+    },
+    {
+     "question_type": "how many",
+     "questions": 610,
+     "exact": 70.0,
+     "f1": 72.08
+    },
+    {
+     "question_type": "which",
+     "questions": 512,
+     "exact": 68.75,
+     "f1": 71.84
+    },
+    {
+     "question_type": "how",
+     "questions": 495,
+     "exact": 52.12,
+     "f1": 62.21
+    },
+    {
+     "question_type": "where",
+     "questions": 483,
+     "exact": 59.21,
+     "f1": 63.84
+    },
+    {
+     "question_type": "why",
+     "questions": 194,
+     "exact": 50.52,
+     "f1": 60.15
+    },
+    {
+     "question_type": "how much",
+     "questions": 161,
+     "exact": 63.35,
+     "f1": 67.34
+    },
+    {
+     "question_type": "other",
+     "questions": 110,
+     "exact": 52.73,
+     "f1": 62.21
+    }
+   ],
+   "by_answer_length": [
+    {
+     "answer_length": "1 word",
+     "questions": 2738,
+     "exact": 69.07,
+     "f1": 73.5
+    },
+    {
+     "answer_length": "2 words",
+     "questions": 1518,
+     "exact": 65.94,
+     "f1": 71.48
+    },
+    {
+     "answer_length": "3-4 words",
+     "questions": 1087,
+     "exact": 64.31,
+     "f1": 73.8
+    },
+    {
+     "answer_length": "5-9 words",
+     "questions": 494,
+     "exact": 54.45,
+     "f1": 67.28
+    },
+    {
+     "answer_length": "10+ words",
+     "questions": 91,
+     "exact": 37.36,
+     "f1": 50.92
+    }
+   ]
+  },
+  "roberta-base-squad2": {
+   "questions": 11873,
+   "errors": 2386,
+   "outcomes": {
+    "correct": 9487,
+    "false answer": 1081,
+    "missed answer": 572,
+    "too long": 269,
+    "too short": 228,
+    "partial overlap": 63,
+    "wrong span": 173
+   },
+   "error_shares_pct": {
+    "false answer": 45.3,
+    "missed answer": 24.0,
+    "too long": 11.3,
+    "too short": 9.6,
+    "partial overlap": 2.6,
+    "wrong span": 7.3
+   },
+   "by_question_type_answerable": [
+    {
+     "question_type": "what",
+     "questions": 3618,
+     "exact": 77.97,
+     "f1": 83.48
+    },
+    {
+     "question_type": "who",
+     "questions": 517,
+     "exact": 82.59,
+     "f1": 85.25
+    },
+    {
+     "question_type": "when",
+     "questions": 396,
+     "exact": 84.34,
+     "f1": 86.76
+    },
+    {
+     "question_type": "which",
+     "questions": 330,
+     "exact": 84.24,
+     "f1": 88.73
+    },
+    {
+     "question_type": "how many",
+     "questions": 315,
+     "exact": 86.35,
+     "f1": 90.48
+    },
+    {
+     "question_type": "where",
+     "questions": 255,
+     "exact": 77.25,
+     "f1": 84.89
+    },
+    {
+     "question_type": "how",
+     "questions": 243,
+     "exact": 60.08,
+     "f1": 80.38
+    },
+    {
+     "question_type": "why",
+     "questions": 100,
+     "exact": 47.0,
+     "f1": 70.11
+    },
+    {
+     "question_type": "how much",
+     "questions": 89,
+     "exact": 77.53,
+     "f1": 83.44
+    },
+    {
+     "question_type": "other",
+     "questions": 65,
+     "exact": 49.23,
+     "f1": 63.79
+    }
+   ],
+   "by_question_type_all": [
+    {
+     "question_type": "what",
+     "questions": 7431,
+     "exact": 80.47,
+     "f1": 83.16
+    },
+    {
+     "question_type": "who",
+     "questions": 1119,
+     "exact": 81.41,
+     "f1": 82.64
+    },
+    {
+     "question_type": "when",
+     "questions": 758,
+     "exact": 82.85,
+     "f1": 84.11
+    },
+    {
+     "question_type": "how many",
+     "questions": 610,
+     "exact": 82.3,
+     "f1": 84.43
+    },
+    {
+     "question_type": "which",
+     "questions": 512,
+     "exact": 83.4,
+     "f1": 86.29
+    },
+    {
+     "question_type": "how",
+     "questions": 495,
+     "exact": 69.9,
+     "f1": 79.87
+    },
+    {
+     "question_type": "where",
+     "questions": 483,
+     "exact": 78.67,
+     "f1": 82.7
+    },
+    {
+     "question_type": "why",
+     "questions": 194,
+     "exact": 62.37,
+     "f1": 74.28
+    },
+    {
+     "question_type": "how much",
+     "questions": 161,
+     "exact": 80.12,
+     "f1": 83.39
+    },
+    {
+     "question_type": "other",
+     "questions": 110,
+     "exact": 57.27,
+     "f1": 65.88
+    }
+   ],
+   "by_answer_length": [
+    {
+     "answer_length": "1 word",
+     "questions": 2738,
+     "exact": 80.24,
+     "f1": 83.69
+    },
+    {
+     "answer_length": "2 words",
+     "questions": 1518,
+     "exact": 77.73,
+     "f1": 84.28
+    },
+    {
+     "answer_length": "3-4 words",
+     "questions": 1087,
+     "exact": 78.38,
+     "f1": 86.54
+    },
+    {
+     "answer_length": "5-9 words",
+     "questions": 494,
+     "exact": 69.03,
+     "f1": 81.46
+    },
+    {
+     "answer_length": "10+ words",
+     "questions": 91,
+     "exact": 58.24,
+     "f1": 72.9
+    }
+   ]
+  }
+ }
+}

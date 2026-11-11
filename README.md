@@ -16,7 +16,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | --- | --- | --- |
 | 1 | Pipeline works on a small sample | Done |
 | 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
-| 3 | Demo online | Demo done (run it from Colab or your computer); error analysis to do |
+| 3 | Demo online | Demo done (run it from Colab or your computer); error analysis done |
 | 4 | Report and presentation | Not started |
 
 See [TASKS.md](TASKS.md) for the full task list.
@@ -61,6 +61,25 @@ by tuning on the questions it is scored on (doing that gives 68.30).
 
 ![F1 against the no-answer threshold](results/threshold_sweep.png)
 
+### Where the errors are
+
+Our model gets 4,258 of the 11,873 dev questions wrong. Three quarters of those errors are about deciding
+whether to answer at all, not about finding the span:
+
+| Error type | DistilBERT (ours) | % of its errors | RoBERTa (deepset) |
+| --- | --- | --- | --- |
+| False answer: answered an unanswerable question | 2,224 | 52.2% | 1,081 |
+| Missed answer: said "no answer" to an answerable question | 1,033 | 24.3% | 572 |
+| Too long or too short: right place, different edges | 573 | 13.4% | 497 |
+| Partial overlap or wrong span | 428 | 10.1% | 236 |
+
+"Why" and "how" questions and answers of five or more words are the hardest for both models. We also read
+60 of our model's errors one by one: most false answers come from trick questions that change one detail of
+the passage or reverse its meaning, and the too long / too short answers we read were all ones a person
+would accept. Details are in [notebooks/03_error_analysis.ipynb](notebooks/03_error_analysis.ipynb).
+
+![Errors by type, F1 by question word and by answer length](results/error_analysis.png)
+
 ## Repository layout
 
 ```text
@@ -82,6 +101,7 @@ AI-Question-Answering-System/
 │   ├── threshold.py            # sweep the no-answer threshold, plot F1 against it
 │   ├── predict.py              # answer one question (used by the demo and the benchmark)
 │   ├── benchmark.py            # model size and CPU time per question
+│   ├── errors.py               # error types, F1 by question word and answer length
 │   └── demo.py                 # what the demo shows (no user-interface code)
 ├── app/
 │   ├── app.py                  # the Gradio demo screen
@@ -93,6 +113,7 @@ AI-Question-Answering-System/
 ├── notebooks/
 │   ├── 01_explore_data.ipynb   # dataset stats + a ready-made model as a baseline
 │   ├── 02_train_colab.ipynb    # training in Colab: smoke test, full run, dev-set score
+│   ├── 03_error_analysis.ipynb # what the models get wrong, and why
 │   └── 04_demo_colab.ipynb     # starts the demo in Colab with a public link
 ├── tests/                      # unit tests (no internet or GPU needed)
 ├── pytest.ini
@@ -105,10 +126,13 @@ AI-Question-Answering-System/
     ├── roberta-base-squad2_predictions.json
     ├── threshold_sweep.json                  # scores at every threshold, for both models
     ├── threshold_sweep.png                   # the figure above
-    └── efficiency.json                       # size and CPU time per question
+    ├── efficiency.json                       # size and CPU time per question
+    ├── error_breakdown.json                  # error types and F1 by question word / answer length
+    ├── error_analysis.png                    # the figure for it
+    └── error_sample.csv                      # 60 wrong predictions labelled by hand
 ```
 
-Coming next: `notebooks/03_error_analysis.ipynb`, the long-document mode.
+Coming next: the long-document mode, the report.
 
 ## Getting started
 

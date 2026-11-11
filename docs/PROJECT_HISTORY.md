@@ -269,9 +269,37 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
   - For the presentation: start the demo beforehand and put that day's link in the QR code (T12). A fixed
     QR code can point at the README's "Try the demo" section instead. Worth asking Dr. Li whether a demo
     run live from Colab meets the "deployed demo" expectation, since the proposal said Hugging Face Space.
+- **T8 (error analysis), 2026-11-10; labels read by David and task ticked on 2026-11-11.** New: `src/errors.py`,
+  `notebooks/03_error_analysis.ipynb`, 22 new unit tests (124 in total).
+  - Automatic error types for every dev question (one each): false answer, missed answer, too long, too
+    short, partial overlap, wrong span. DistilBERT has 4,258 errors: 2,224 false answers (52.2%), 1,033
+    missed answers (24.3%), 341 too long, 232 too short, 89 partial overlap, 339 wrong span. RoBERTa has
+    2,386: 1,081 / 572 / 269 / 228 / 63 / 173. So 76% of our errors are answer / no-answer decisions, and
+    most of RoBERTa's advantage (1,143 of its 1,872 fewer errors) is fewer false answers.
+  - F1 by question word, answerable questions only (ours / RoBERTa): how many 85.0 / 90.5, when 84.2 / 86.8,
+    how much 78.0 / 83.4, which 77.2 / 88.7, who 75.3 / 85.2, where 71.1 / 84.9, what 69.9 / 83.5,
+    how 64.2 / 80.4, why 58.7 / 70.1. Numbers and dates are easy; explanations are hard for both models.
+  - F1 by gold answer length (ours / RoBERTa): 1 word 73.5 / 83.7, 2 words 71.5 / 84.3, 3-4 words
+    73.8 / 86.5, 5-9 words 67.3 / 81.5, 10+ words 50.9 / 72.9.
+  - Hand labels: a fixed random sample (seed 42) of 60 of our model's errors, every type represented,
+    in `results/error_sample.csv` with the passage around the gold answer and the prediction. Labels were
+    proposed during development after reading each one; David and Kosi read them and
+    correct any they disagree with (the file has no sign-off column: David's choice, 2026-11-11). Re-running `python -m src.errors` keeps labels already in the file.
+    Counts out of 60: swapped detail 14, reversed meaning 10, over-cautious (had the right span) 10,
+    boundary but acceptable 10, distractor 7, missed with a wrong best span 5, not stated 2, gold label
+    debatable 1, needs reasoning 1.
+  - What it means: (1) 24 of 27 sampled false answers are trick questions that reuse the passage's wording
+    and change one detail or flip the meaning; the model matches wording. (2) In 10 of 15 missed answers
+    the best span was right, so these are threshold cases. (3) All 9 sampled too long / too short answers
+    would be accepted by a person, so EM understates quality. (4) Only 1 of 60 needed reasoning.
+  - An out-of-dataset example David found in the demo (a fresco restoration passage, "Why did the museum
+    board decide to stop using the chemical treatments?") is in the notebook: the reason is never stated
+    in one span, and both DistilBERT and RoBERTa return the neighbouring clause instead of abstaining.
+    It goes in the report's limitations: extractive models copy one span and match wording.
 
 ## Open questions
 
-- Presentation time for a two-person team (20 or 30 minutes)?
+- ~~Presentation time for a two-person team (20 or 30 minutes)?~~ Answered 2026-11-10: 30 minutes.
+- ~~Does a demo started live from Colab count as deployed?~~ Answered 2026-11-10: yes.
 - Who is A and who is B?
 - Project deadline and presentation date.
