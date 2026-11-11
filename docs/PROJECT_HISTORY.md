@@ -343,7 +343,8 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
   - Checked: no unused imports in `src/`, `app/`, `scripts/`, `tests/`; 133 tests pass.
 
 ## Open questions
-- Add a LICENSE file to the repo (for example MIT), and is Apache 2.0 right for the model?
+- ~~Add a LICENSE file to the repo, and is Apache 2.0 right for the model?~~ Answered 2026-11-11: David
+  approved Apache 2.0 for the model and asked for an MIT licence for the code (`LICENSE`, both names).
 
 - ~~Presentation time for a two-person team (20 or 30 minutes)?~~ Answered 2026-11-10: 30 minutes.
 - ~~Does a demo started live from Colab count as deployed?~~ Answered 2026-11-10: yes.

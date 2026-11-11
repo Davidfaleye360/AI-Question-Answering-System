@@ -114,6 +114,7 @@ so the scores on unanswerable questions are a lower bound. Numbers are in `resul
 ```text
 AI-Question-Answering-System/
 ├── README.md
+├── LICENSE                     # MIT
 ├── TASKS.md                    # project task list
 ├── requirements.txt            # packages, with version ranges (use this in Colab)
 ├── requirements-lock.txt       # the exact versions we used
@@ -309,6 +310,11 @@ reproduce and compare. Don't hard-code numbers in notebooks; read them from the 
 - Baseline model: [deepset/roberta-base-squad2](https://huggingface.co/deepset/roberta-base-squad2)
 - Dataset: [rajpurkar/squad_v2](https://huggingface.co/datasets/rajpurkar/squad_v2)
 - Why we made each design decision: [docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)
+
+## Licence
+
+The code in this repository is released under the [MIT License](LICENSE). Our trained model is released
+under Apache 2.0, like the DistilBERT model it starts from. SQuAD 2.0 is released under CC BY-SA 4.0.
 
 ## References
 
