@@ -51,7 +51,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
 
 ## Week 4: extension, report, presentation
 
-- [ ] **T10. Long-document mode** (A)
+- [x] **T10. Long-document mode** (A) · _done on 2026-11-11: `src/longdoc.py` asks every question of three dev articles (2,941 / 5,294 / 6,696 tokens, 907 questions) against the whole article. F1 falls from 70.6 / 60.1 / 59.3 to 54.5 / 37.3 / 41.5, mainly because the model stops abstaining; a per-window decision rule recovers 6 to 7 points and is now used in the demo. Results in `results/long_documents.json`._
   Answer questions over long texts using overlapping windows. Test on 3 long documents.
 - [ ] **T11. Technical report, 2–4 pages** (A writes method and training, B writes results and analysis)
 - [ ] **T12. Slides and rehearsal** (A + B)

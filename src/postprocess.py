@@ -23,6 +23,12 @@ What we do with them:
 Step 5 is kept separate from the rest (`apply_threshold`), so tau can be tuned later
 without running the model again.
 
+Steps 3 and 4 compare scores from DIFFERENT windows. That is fine for SQuAD, where 99% of
+the passages fit in one window, but a whole article has dozens of windows, and the highest
+span score among dozens is high by luck alone. `window_rule="per_window"` is the alternative
+for long documents: every window is judged on its own (its no-answer score minus its own
+best span), and the window that is most sure it holds the answer wins (see src/longdoc.py).
+
 Adapted from the Hugging Face LLM Course, chapter 7.7, and the official SQuAD 2.0
 post-processing in the transformers question-answering examples.
 """
@@ -100,6 +106,7 @@ def postprocess_predictions(
     max_answer_length: int = 30,
     null_threshold: float = 0.0,
     n_candidates: int = 5,
+    window_rule: str = "global",
 ) -> dict[str, Prediction]:
     """Combine the scores of all windows into one Prediction per question.
 
@@ -107,9 +114,16 @@ def postprocess_predictions(
     features:  the windows from `prepare_eval_features`; needs "example_id" and "offset_mapping".
     start_logits, end_logits: one row per window, in the same order as `features`.
 
+    window_rule: "global" (default) takes the best span and the lowest no-answer score over
+    all windows. "per_window" takes both from the single window whose best span beats its
+    own no-answer score by the most. With one window per question the two are identical.
+
     Returns {question id: Prediction}. The answer text is cut out of the ORIGINAL passage
     using character offsets, so it keeps the passage's capitalisation and spacing.
     """
+    if window_rule not in ("global", "per_window"):
+        raise ValueError(f"window_rule must be 'global' or 'per_window', got {window_rule!r}")
+
     windows_of = defaultdict(list)
     all_offsets = []
     for i, feature in enumerate(features):
@@ -125,10 +139,17 @@ def postprocess_predictions(
         context = example["context"]
         null_score = float("inf")
         best_score_of_span: dict[tuple[int, int], float] = {}
+        surest_window = None   # (margin, null score, span score, start_char, end_char) of the most confident window
 
         for i in windows_of[example["id"]]:
-            null_score = min(null_score, float(start_logits[i][0] + end_logits[i][0]))
+            window_null = float(start_logits[i][0] + end_logits[i][0])
+            null_score = min(null_score, window_null)
             spans = best_spans_in_window(start_logits[i], end_logits[i], all_offsets[i], n_best, max_answer_length)
+            if spans:
+                score, start_char, end_char = max(spans)
+                vote = (window_null - score, window_null, score, start_char, end_char)
+                if surest_window is None or vote < surest_window:
+                    surest_window = vote
             for score, start_char, end_char in spans:
                 # Neighbouring windows overlap, so the same span can turn up twice. Keep its best score.
                 key = (start_char, end_char)
@@ -147,6 +168,14 @@ def postprocess_predictions(
             # No valid span at all (should not happen with a real passage): the only option is "no answer".
             best_text, best_score = "", float("-inf")
         score_diff = null_score - best_score
+
+        if window_rule == "per_window" and surest_window is not None:
+            score_diff, null_score, best_score, start_char, end_char = surest_window
+            best_text = context[start_char:end_char]
+            # List the chosen span first, so candidates[0] is always the span behind the answer.
+            chosen = {"text": best_text, "score": best_score, "start_char": start_char, "end_char": end_char}
+            others = [c for c in candidates if (c["start_char"], c["end_char"]) != (start_char, end_char)]
+            candidates = ([chosen] + others)[:n_candidates]
 
         predictions[example["id"]] = Prediction(
             text=choose_answer(best_text, score_diff, null_threshold),

@@ -1,0 +1,218 @@
+{
+ "model": "Ingsyling/distilbert-squad2",
+ "dataset": "rajpurkar/squad_v2 (validation)",
+ "device": "mps",
+ "null_threshold": 0.0,
+ "articles": {
+  "Amazon_rainforest": {
+   "questions": 284,
+   "document_characters": 14746,
+   "paragraphs": 21,
+   "windows_per_question": 12.1,
+   "seconds_per_question": 0.218,
+   "rules": {
+    "global": {
+     "at_tau_0": {
+      "exact": 49.3,
+      "f1": 54.53,
+      "total": 284,
+      "HasAns_exact": 72.68,
+      "HasAns_f1": 80.81,
+      "HasAns_total": 183,
+      "NoAns_exact": 6.93,
+      "NoAns_f1": 6.93,
+      "NoAns_total": 101
+     },
+     "right_paragraph_pct": 94.0,
+     "answered_pct": 97.2,
+     "best_tau": -8.62,
+     "at_best_tau": {
+      "exact": 59.15,
+      "f1": 63.81,
+      "HasAns_exact": 59.02,
+      "HasAns_f1": 66.23,
+      "NoAns_exact": 59.41,
+      "NoAns_f1": 59.41,
+      "answered_pct": 65.14
+     }
+    },
+    "per_window": {
+     "at_tau_0": {
+      "exact": 56.69,
+      "f1": 62.0,
+      "total": 284,
+      "HasAns_exact": 65.03,
+      "HasAns_f1": 73.27,
+      "HasAns_total": 183,
+      "NoAns_exact": 41.58,
+      "NoAns_f1": 41.58,
+      "NoAns_total": 101
+     },
+     "right_paragraph_pct": 87.7,
+     "answered_pct": 81.0,
+     "best_tau": -2.85,
+     "at_best_tau": {
+      "exact": 60.21,
+      "f1": 64.78,
+      "HasAns_exact": 58.47,
+      "HasAns_f1": 65.56,
+      "NoAns_exact": 63.37,
+      "NoAns_f1": 63.37,
+      "answered_pct": 65.14
+     }
+    }
+   },
+   "paragraph_mode": {
+    "exact": 64.44,
+    "f1": 70.6,
+    "total": 284,
+    "HasAns_exact": 71.58,
+    "HasAns_f1": 81.14,
+    "HasAns_total": 183,
+    "NoAns_exact": 51.49,
+    "NoAns_f1": 51.49,
+    "NoAns_total": 101
+   }
+  },
+  "Normans": {
+   "questions": 208,
+   "document_characters": 25404,
+   "paragraphs": 39,
+   "windows_per_question": 21.8,
+   "seconds_per_question": 0.389,
+   "rules": {
+    "global": {
+     "at_tau_0": {
+      "exact": 35.1,
+      "f1": 37.3,
+      "total": 208,
+      "HasAns_exact": 60.42,
+      "HasAns_f1": 65.19,
+      "HasAns_total": 96,
+      "NoAns_exact": 13.39,
+      "NoAns_f1": 13.39,
+      "NoAns_total": 112
+     },
+     "right_paragraph_pct": 73.4,
+     "answered_pct": 91.8,
+     "best_tau": -10.33,
+     "at_best_tau": {
+      "exact": 64.9,
+      "f1": 65.99,
+      "HasAns_exact": 36.46,
+      "HasAns_f1": 38.82,
+      "NoAns_exact": 89.29,
+      "NoAns_f1": 89.29,
+      "answered_pct": 27.88
+     }
+    },
+    "per_window": {
+     "at_tau_0": {
+      "exact": 41.35,
+      "f1": 44.0,
+      "total": 208,
+      "HasAns_exact": 58.33,
+      "HasAns_f1": 64.09,
+      "HasAns_total": 96,
+      "NoAns_exact": 26.79,
+      "NoAns_f1": 26.79,
+      "NoAns_total": 112
+     },
+     "right_paragraph_pct": 75.8,
+     "answered_pct": 83.2,
+     "best_tau": -8.92,
+     "at_best_tau": {
+      "exact": 59.62,
+      "f1": 60.43,
+      "HasAns_exact": 26.04,
+      "HasAns_f1": 27.81,
+      "NoAns_exact": 88.39,
+      "NoAns_f1": 88.39,
+      "answered_pct": 22.12
+     }
+    }
+   },
+   "paragraph_mode": {
+    "exact": 58.17,
+    "f1": 60.1,
+    "total": 208,
+    "HasAns_exact": 75.0,
+    "HasAns_f1": 79.17,
+    "HasAns_total": 96,
+    "NoAns_exact": 43.75,
+    "NoAns_f1": 43.75,
+    "NoAns_total": 112
+   }
+  },
+  "Oxygen": {
+   "questions": 415,
+   "document_characters": 30764,
+   "paragraphs": 43,
+   "windows_per_question": 27.8,
+   "seconds_per_question": 0.581,
+   "rules": {
+    "global": {
+     "at_tau_0": {
+      "exact": 39.04,
+      "f1": 41.52,
+      "total": 415,
+      "HasAns_exact": 58.09,
+      "HasAns_f1": 62.38,
+      "HasAns_total": 241,
+      "NoAns_exact": 12.64,
+      "NoAns_f1": 12.64,
+      "NoAns_total": 174
+     },
+     "right_paragraph_pct": 72.8,
+     "answered_pct": 93.3,
+     "best_tau": -7.78,
+     "at_best_tau": {
+      "exact": 53.98,
+      "f1": 54.83,
+      "HasAns_exact": 38.17,
+      "HasAns_f1": 39.65,
+      "NoAns_exact": 75.86,
+      "NoAns_f1": 75.86,
+      "answered_pct": 41.93
+     }
+    },
+    "per_window": {
+     "at_tau_0": {
+      "exact": 45.78,
+      "f1": 47.73,
+      "total": 415,
+      "HasAns_exact": 50.62,
+      "HasAns_f1": 53.97,
+      "HasAns_total": 241,
+      "NoAns_exact": 39.08,
+      "NoAns_f1": 39.08,
+      "NoAns_total": 174
+     },
+     "right_paragraph_pct": 70.0,
+     "answered_pct": 74.5,
+     "best_tau": -3.75,
+     "at_best_tau": {
+      "exact": 51.08,
+      "f1": 51.91,
+      "HasAns_exact": 34.85,
+      "HasAns_f1": 36.28,
+      "NoAns_exact": 73.56,
+      "NoAns_f1": 73.56,
+      "answered_pct": 42.17
+     }
+    }
+   },
+   "paragraph_mode": {
+    "exact": 57.35,
+    "f1": 59.29,
+    "total": 415,
+    "HasAns_exact": 63.9,
+    "HasAns_f1": 67.24,
+    "HasAns_total": 241,
+    "NoAns_exact": 48.28,
+    "NoAns_f1": 48.28,
+    "NoAns_total": 174
+   }
+  }
+ }
+}

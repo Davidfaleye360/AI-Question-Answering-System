@@ -296,6 +296,36 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     board decide to stop using the chemical treatments?") is in the notebook: the reason is never stated
     in one span, and both DistilBERT and RoBERTa return the neighbouring clause instead of abstaining.
     It goes in the report's limitations: extractive models copy one span and match wording.
+- **Is fine-tuning doing anything? (David's question, 2026-11-11.)** Yes. On the first 1,000 dev questions
+  the untrained `distilbert-base-uncased` (random QA head) scores EM 1.2 / F1 4.6; our fine-tuned model
+  scores 64.2 / 67.7 on the same questions. RoBERTa in the demo is a different, larger model fine-tuned by
+  deepset, not "our model before training". More data is not available (we used all of SQuAD 2.0), and a
+  third epoch would add little; the remaining gap to RoBERTa is model size, which was our trade-off.
+- **T10 (long-document mode), 2026-11-11.** New: `src/longdoc.py`, a `window_rule` option in
+  `src/postprocess.py`, 9 new unit tests (133 in total).
+  - Test design: instead of a few hand-picked questions, rebuild three dev articles from their paragraphs
+    (Amazon_rainforest 2,941 tokens, Normans 5,294, Oxygen 6,696) and ask all 907 of their SQuAD questions
+    against the whole article. Gold answers are known, so EM and F1 are exact, and the same questions'
+    paragraph-level scores are the baseline.
+  - F1 at tau 0, paragraph -> whole article with the evaluation's "global" rule: 70.6 -> 54.5,
+    60.1 -> 37.3, 59.3 -> 41.5. Answerable F1 holds up better (81.1 -> 80.8, 79.2 -> 65.2, 67.2 -> 62.4)
+    and the span is in the right paragraph 94.0 / 73.4 / 72.8% of the time. Unanswerable F1 collapses
+    (51.5 -> 6.9, 43.8 -> 13.4, 48.3 -> 12.6).
+  - Why: the global rule takes the HIGHEST span score and the LOWEST no-answer score over 12 to 28
+    windows per question. With that many windows one of each extreme always turns up, so the model
+    almost never abstains.
+  - "per_window" rule: each window is judged by its own no-answer score minus its own best span, and
+    the most confident window decides. F1 at tau 0: 62.0 / 44.0 / 47.7 (+7.5 / +6.7 / +6.2). It is the
+    same as the global rule when there is one window, so the dev-set results are unchanged.
+  - Re-tuning tau (optimistic, tuned on the same questions) helps both rules and brings them close:
+    global 63.8 / 66.0 / 54.8 at tau -8.6 / -10.3 / -7.8; per-window 64.8 / 60.4 / 51.9 at -2.9 / -8.9 /
+    -3.8. So the honest summary is: the single-paragraph threshold does not carry over to long documents;
+    without re-tuning, the per-window rule is the safer default. At these thresholds the model abstains
+    heavily (answerable F1 28-66), so the gain comes from unanswerable questions.
+  - Caveat: gold "unanswerable" labels were written for the paragraph. Some of those questions may be
+    answerable from elsewhere in the article, so long-document NoAns scores are a lower bound.
+  - Cost: 0.22 / 0.39 / 0.58 s per question on the Mac's GPU, growing with the number of windows.
+  - Demo: `src/demo.py` now uses the per-window rule and says how many windows a long passage needed.
 
 ## Open questions
 

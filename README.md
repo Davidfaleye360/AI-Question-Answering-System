@@ -17,7 +17,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | 1 | Pipeline works on a small sample | Done |
 | 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
 | 3 | Demo online | Demo done (run it from Colab or your computer); error analysis done |
-| 4 | Report and presentation | Not started |
+| 4 | Report and presentation | In progress: long-document extension done; report and slides to do |
 
 See [TASKS.md](TASKS.md) for the full task list.
 
@@ -46,6 +46,9 @@ CPU time is the median time to answer one dev question end to end on an Apple M2
 | RoBERTa (deepset) | 79.90 | 82.91 | 84.01 | 81.82 | 496 MB (124 M parameters) | 57 ms |
 
 Our model is 15.5 F1 points behind RoBERTa at 54% of the size and 1.8 times the speed.
+
+Fine-tuning is what gets it there: the same `distilbert-base-uncased` before our training scores 1.2 EM /
+4.6 F1 on the first 1,000 dev questions, against 64.2 / 67.7 for our model on the same questions.
 
 ### Tuning the no-answer threshold
 
@@ -80,6 +83,32 @@ would accept. Details are in [notebooks/03_error_analysis.ipynb](notebooks/03_er
 
 ![Errors by type, F1 by question word and by answer length](results/error_analysis.png)
 
+### Long documents (extension)
+
+SQuAD hands the model the one paragraph that holds the answer. To test the harder, more realistic case, we
+glued all paragraphs of three dev articles back together and asked every question of each article against
+the **whole document**, which the model reads in overlapping windows. F1 at τ = 0:
+
+| Article | Length | Windows per question | Given the right paragraph | Whole article, global rule | Whole article, per-window rule |
+| --- | --- | --- | --- | --- | --- |
+| Amazon rainforest (284 questions) | 2,941 tokens | 12 | 70.6 | 54.5 | 62.0 |
+| Normans (208 questions) | 5,294 tokens | 22 | 60.1 | 37.3 | 44.0 |
+| Oxygen (415 questions) | 6,696 tokens | 28 | 59.3 | 41.5 | 47.7 |
+
+- **Finding the place mostly works.** When the model answers an answerable question, its span is in the
+  right paragraph 73% to 94% of the time, and F1 on answerable questions stays close to the paragraph
+  setting for the shortest article (80.8 against 81.1).
+- **Knowing when not to answer breaks.** With dozens of windows, some window almost always contains a
+  span that looks good, so the model nearly stops abstaining: F1 on unanswerable questions falls to 7-13.
+- **Judging each window on its own helps.** The "global" rule compares the best span from any window with
+  the lowest no-answer score from any window. The "per-window" rule lets the window that is most sure of
+  itself decide, and gains 6 to 7 F1 points with no re-tuning. The demo uses it.
+- **The threshold needs re-tuning for long documents.** A much lower τ (around −3 to −10) recovers a lot,
+  so the threshold tuned on single paragraphs does not carry over.
+
+One caveat: a question that is unanswerable from its paragraph may be answerable elsewhere in the article,
+so the scores on unanswerable questions are a lower bound. Numbers are in `results/long_documents.json`.
+
 ## Repository layout
 
 ```text
@@ -102,6 +131,7 @@ AI-Question-Answering-System/
 │   ├── predict.py              # answer one question (used by the demo and the benchmark)
 │   ├── benchmark.py            # model size and CPU time per question
 │   ├── errors.py               # error types, F1 by question word and answer length
+│   ├── longdoc.py              # long-document mode: questions against a whole article
 │   └── demo.py                 # what the demo shows (no user-interface code)
 ├── app/
 │   ├── app.py                  # the Gradio demo screen
@@ -129,10 +159,11 @@ AI-Question-Answering-System/
     ├── efficiency.json                       # size and CPU time per question
     ├── error_breakdown.json                  # error types and F1 by question word / answer length
     ├── error_analysis.png                    # the figure for it
-    └── error_sample.csv                      # 60 wrong predictions labelled by hand
+    ├── error_sample.csv                      # 60 wrong predictions labelled by hand
+    └── long_documents.json                   # scores when the model reads whole articles
 ```
 
-Coming next: the long-document mode, the report.
+Coming next: the report and the slides.
 
 ## Getting started
 
@@ -207,7 +238,8 @@ python app/app.py --share
 - a threshold slider: moving it re-decides instantly from the same scores, without running the model again
 - a switch between our DistilBERT and the RoBERTa baseline
 
-Long passages work too: they are read in overlapping windows, like in training.
+Long passages work too: they are read in overlapping windows, like in training, and the demo says how many
+windows it needed.
 
 **Hosting.** We planned to host the demo on a Hugging Face Space. Hugging Face now requires a paid PRO plan
 for Gradio Spaces, so instead the demo is started on demand, from Colab or a laptop, with a public link.

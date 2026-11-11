@@ -56,7 +56,11 @@ def get_model(label: str, loader=load_for_inference) -> tuple:
 def ask(model, tokenizer, question: str, context: str, cfg: Config, n_candidates: int = 5) -> dict:
     """Run the model once. Returns a plain dict (it is kept in the browser session between clicks)."""
     started = time.perf_counter()
-    prediction = answer_question(model, tokenizer, question.strip(), context, cfg, n_candidates=n_candidates)
+    details: dict = {}
+    # "per_window" is the rule that held up best on whole articles at an untuned threshold (T10,
+    # results/long_documents.json). For a passage that fits in one window it changes nothing.
+    prediction = answer_question(model, tokenizer, question.strip(), context, cfg, n_candidates=n_candidates,
+                                 window_rule="per_window", details=details)
     return {
         "context": context,
         "best_span": prediction.best_span_text,
@@ -65,6 +69,7 @@ def ask(model, tokenizer, question: str, context: str, cfg: Config, n_candidates
         "score_diff": prediction.score_diff,
         "candidates": prediction.candidates,
         "seconds": time.perf_counter() - started,
+        "windows": details["windows"],
     }
 
 
@@ -104,6 +109,8 @@ def render(result: dict | None, tau: float) -> tuple[str, list, list[list], str]
 
     diff = result["score_diff"]
     timing = f"Model time: {1000 * result['seconds']:.0f} ms."
+    if result.get("windows", 1) > 1:
+        timing += f" The passage was too long to read at once, so it was read in {result['windows']} overlapping windows."
     if not candidates:
         return "### No answer found in the passage", [(context, None)], rows, timing
 

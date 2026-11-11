@@ -130,3 +130,24 @@ def test_model_list_and_examples_are_well_formed():
     assert DEFAULT_MODEL in MODELS and len(MODELS) == 2
     assert all(-8 <= m.default_tau <= 8 and "/" in m.hub_id for m in MODELS.values())
     assert all(len(row) == 2 and row[1].endswith("?") for row in EXAMPLES)
+
+
+def test_long_passages_report_how_many_windows_were_read(tokenizer):
+    from transformers import DistilBertConfig, DistilBertForQuestionAnswering
+
+    from conftest import FILLER_WORDS
+
+    cfg = Config()
+    cfg.preprocessing.max_length, cfg.preprocessing.doc_stride = 64, 16
+    model = DistilBertForQuestionAnswering(DistilBertConfig(
+        vocab_size=tokenizer.vocab_size, dim=32, hidden_dim=64, n_layers=1, n_heads=2, max_position_embeddings=64))
+    model.eval()
+
+    short = ask(model, tokenizer, "Where was Curie born?", CONTEXT_CURIE, cfg)
+    assert short["windows"] == 1 and "windows" not in render(short, 0.0)[3]
+
+    long_passage = " ".join(FILLER_WORDS[:100]) + " " + CONTEXT_CURIE
+    long = ask(model, tokenizer, "Where was Curie born?", long_passage, cfg)
+    assert long["windows"] > 1
+    assert f"read in {long['windows']} overlapping windows" in render(long, 0.0)[3]
+    assert "windows" not in render(_result(), 0.0)[3], "results saved before this was added still render"

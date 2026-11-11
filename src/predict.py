@@ -30,10 +30,14 @@ PADDING_SCORE = -10000.0   # score for padding positions the model was never sho
 
 def answer_question(model, tokenizer, question: str, context: str, cfg: Config,
                     null_threshold: float | None = None, n_candidates: int = 5,
-                    device: torch.device | str = "cpu") -> Prediction:
+                    device: torch.device | str = "cpu", window_rule: str = "global",
+                    details: dict | None = None) -> Prediction:
     """The model's answer to `question` given `context`, with its top candidate spans.
 
     null_threshold=None uses the value in the config; the demo's slider passes its own.
+    window_rule is how the windows of a long passage are combined (see src/postprocess.py);
+    it makes no difference for a passage that fits in one window.
+    If `details` is a dict, the number of windows is written into it as details["windows"].
     The model must already be on `device` and in eval mode (see `load_for_inference`).
     """
     pre, post = cfg.preprocessing, cfg.postprocessing
@@ -63,8 +67,10 @@ def answer_question(model, tokenizer, question: str, context: str, cfg: Config,
         [example], features, start_logits, end_logits,
         n_best=post.n_best, max_answer_length=post.max_answer_length,
         null_threshold=post.null_threshold if null_threshold is None else null_threshold,
-        n_candidates=n_candidates,
+        n_candidates=n_candidates, window_rule=window_rule,
     )
+    if details is not None:
+        details["windows"] = n_windows
     return predictions[example["id"]]
 
 

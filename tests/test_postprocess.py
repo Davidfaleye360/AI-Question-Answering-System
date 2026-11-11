@@ -196,3 +196,50 @@ def test_mismatched_scores_raise(curie):
     start, end = _blank_scores(features)
     with pytest.raises(ValueError, match="windows"):
         postprocess_predictions(rows, features, np.vstack([start, start]), end)
+
+
+def test_window_rules_agree_when_there_is_one_window(curie):
+    rows, features = curie
+    start, end = _blank_scores(features)
+    _point_at(features, start, end, 0, CONTEXT_CURIE, "1911", score=2.0)
+    start[0, 0] = end[0, 0] = 3.0
+    a = postprocess_predictions(rows, features, start, end)["q1"]
+    b = postprocess_predictions(rows, features, start, end, window_rule="per_window")["q1"]
+    assert (a.text, a.best_span_text, a.score_diff) == (b.text, b.best_span_text, b.score_diff)
+
+
+def test_per_window_rule_trusts_the_window_that_is_sure_not_the_highest_raw_score(tokenizer):
+    context = " ".join(FILLER_WORDS[:100]) + " " + CONTEXT_CURIE
+    rows = [make_example("long", "When did Curie win the Chemistry prize?", context, "1911")]
+    features = _features(rows, tokenizer, max_length=64, stride=16)
+    last = len(features) - 1
+    assert last >= 2
+
+    start, end = _blank_scores(features)
+    # Window 0: a high-scoring span, but its own "no answer" score is higher still. It is NOT sure.
+    _point_at(features, start, end, 0, context, FILLER_WORDS[3], score=5.0)     # span 10
+    start[0, 0] = end[0, 0] = 7.0                                               # null 14, margin +4
+    # Last window: a lower span score, but it clearly beats its own "no answer". It IS sure.
+    _point_at(features, start, end, last, context, "1911", score=3.0)           # span 6
+    start[last, 0] = end[last, 0] = 0.0                                         # null 0, margin -6
+    # Every other window: nothing found.
+    for i in range(1, last):
+        start[i, 0] = end[i, 0] = 4.0
+
+    everything = postprocess_predictions(rows, features, start, end)["long"]
+    assert everything.best_span_text == FILLER_WORDS[3], "the global rule takes the highest raw span score"
+    assert everything.score_diff == pytest.approx(0.0 - 10.0)
+
+    each = postprocess_predictions(rows, features, start, end, window_rule="per_window")["long"]
+    assert each.best_span_text == "1911" and each.text == "1911"
+    assert each.score_diff == pytest.approx(-6.0)
+    assert (each.null_score, each.best_span_score) == pytest.approx((0.0, 6.0))
+    assert each.candidates[0]["text"] == "1911", "the chosen span is listed first"
+    assert len({(c["start_char"], c["end_char"]) for c in each.candidates}) == len(each.candidates)
+
+
+def test_unknown_window_rule_raises(curie):
+    rows, features = curie
+    start, end = _blank_scores(features)
+    with pytest.raises(ValueError, match="window_rule"):
+        postprocess_predictions(rows, features, start, end, window_rule="best")
