@@ -53,7 +53,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
 
 - [x] **T10. Long-document mode** (A) · _done on 2026-11-11: `src/longdoc.py` asks every question of three dev articles (2,941 / 5,294 / 6,696 tokens, 907 questions) against the whole article. F1 falls from 70.6 / 60.1 / 59.3 to 54.5 / 37.3 / 41.5, mainly because the model stops abstaining; a per-window decision rule recovers 6 to 7 points and is now used in the demo. Results in `results/long_documents.json`._
   Answer questions over long texts using overlapping windows. Test on 3 long documents.
-- [ ] **T11. Technical report, 2–4 pages** (A writes method and training, B writes results and analysis)
+- [ ] **T11. Technical report, 2–4 pages** (A writes method and training, B writes results and analysis) · _first draft written on 2026-11-11: `report/report.md`, built to a 4-page `report/report.pdf` with `python scripts/build_report.py`. To finish: David and Kosi read it, put it in their own words where they want to, and check each number against the README._
 - [ ] **T12. Slides and rehearsal** (A + B)
   Include a QR code to the demo. Record a 2-minute backup video of the demo.
 - [x] **T13. Final repo cleanup** (A + B) · _done on 2026-11-11: exact versions in `requirements-lock.txt`, a "Reproducing our results" section in the README with the expected numbers, links to the model and the Colab demo, and a model card (`docs/MODEL_CARD.md`) uploaded to https://huggingface.co/Ingsyling/distilbert-squad2. There is no Space (see T9)._

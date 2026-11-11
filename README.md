@@ -17,7 +17,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | 1 | Pipeline works on a small sample | Done |
 | 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
 | 3 | Demo online | Demo done (run it from Colab or your computer); error analysis done |
-| 4 | Report and presentation | In progress: long-document extension and repo cleanup done; report and slides to do |
+| 4 | Report and presentation | In progress: report drafted ([PDF](report/report.pdf)); slides to do |
 
 See [TASKS.md](TASKS.md) for the full task list.
 
@@ -118,6 +118,10 @@ AI-Question-Answering-System/
 ├── TASKS.md                    # project task list
 ├── requirements.txt            # packages, with version ranges (use this in Colab)
 ├── requirements-lock.txt       # the exact versions we used
+├── report/
+│   ├── report.md               # the technical report (edit this)
+│   ├── report.css              # how the PDF looks
+│   └── report.pdf              # built with scripts/build_report.py
 ├── docs/
 │   ├── PROJECT_HISTORY.md      # why each design decision was made, and every result in order
 │   └── MODEL_CARD.md           # the description shown on the model's Hugging Face page
@@ -144,6 +148,7 @@ AI-Question-Answering-System/
 │   └── requirements.txt        # what such a Space would install
 ├── scripts/
 │   ├── check_preprocessing.py  # sanity check: labels decode back to the right answers
+│   ├── build_report.py         # turns report/report.md into report/report.pdf
 │   └── deploy_space.py         # copies the demo to a Hugging Face Space (needs a paid plan)
 ├── notebooks/
 │   ├── 01_explore_data.ipynb   # dataset stats + a ready-made model as a baseline
@@ -309,6 +314,7 @@ reproduce and compare. Don't hard-code numbers in notebooks; read them from the 
 - The demo in Colab: [notebooks/04_demo_colab.ipynb](https://colab.research.google.com/github/Davidfaleye360/AI-Question-Answering-System/blob/main/notebooks/04_demo_colab.ipynb)
 - Baseline model: [deepset/roberta-base-squad2](https://huggingface.co/deepset/roberta-base-squad2)
 - Dataset: [rajpurkar/squad_v2](https://huggingface.co/datasets/rajpurkar/squad_v2)
+- The technical report: [report/report.pdf](report/report.pdf)
 - Why we made each design decision: [docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)
 
 ## Licence

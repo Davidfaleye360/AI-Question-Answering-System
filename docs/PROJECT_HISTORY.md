@@ -341,6 +341,17 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
   - The repo itself has no LICENSE file. Without one, others may read the code but have no stated right
     to reuse it. Open question for David and Kosi.
   - Checked: no unused imports in `src/`, `app/`, `scripts/`, `tests/`; 133 tests pass.
+- **T11 (report), first draft 2026-11-11.** David confirmed: the report is a PDF, the presentation is slides
+  with a QR code, he records the backup video, and no section on AI tools is needed (their use is expected
+  in the course).
+  - The report is written in Markdown (`report/report.md`) so both authors can edit it, and
+    `scripts/build_report.py` builds the PDF with pandoc and headless Chrome (no LaTeX needed). Layout is in
+    `report/report.css`: US Letter, 9.8 pt, single column.
+  - Four pages, about 2,000 words, three tables and two figures (the threshold sweep and the error
+    analysis). Sections: introduction, data, method, results, error analysis, long documents, demo,
+    limitations, conclusion, links, references.
+  - Every number comes from `results/` or this file. David's fresco example is in the limitations.
+  - Still to do by the team: read it, reword it, check the numbers. Rebuild after every edit.
 
 ## Open questions
 - ~~Add a LICENSE file to the repo, and is Apache 2.0 right for the model?~~ Answered 2026-11-11: David
