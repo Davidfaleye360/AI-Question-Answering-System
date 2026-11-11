@@ -326,8 +326,24 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     answerable from elsewhere in the article, so long-document NoAns scores are a lower bound.
   - Cost: 0.22 / 0.39 / 0.58 s per question on the Mac's GPU, growing with the number of windows.
   - Demo: `src/demo.py` now uses the per-window rule and says how many windows a long passage needed.
+- **T13 (repo cleanup), 2026-11-11.** David approved the model card and it was uploaded to the model's
+  Hugging Face page the same day (licence Apache 2.0).
+  - `requirements-lock.txt` holds the exact versions on David's Mac (Python 3.13.1, transformers 4.57.6,
+    datasets 5.0.1, torch 2.15.0, gradio 6.17.3, ...) and records the versions of the Colab training run.
+    `requirements.txt` keeps ranges on purpose: pinning torch would replace Colab's GPU build.
+  - README: "Getting started" is now followed by "Reproducing our results", eight steps with the command,
+    the time it takes and the number to expect. Steps 3 to 7 use the model from the Hub, so the results
+    can be reproduced without retraining. Added a Links section and `docs/` to the layout.
+  - `docs/MODEL_CARD.md`: usage example (run and checked: answers "France", and "" for a question the
+    passage can't answer), results, the comparison table, training settings and limitations taken from
+    the error analysis. Its header declares the licence as Apache 2.0, the same as the base model; that
+    is David's decision to confirm. It becomes the README of the model's Hugging Face page once approved.
+  - The repo itself has no LICENSE file. Without one, others may read the code but have no stated right
+    to reuse it. Open question for David and Kosi.
+  - Checked: no unused imports in `src/`, `app/`, `scripts/`, `tests/`; 133 tests pass.
 
 ## Open questions
+- Add a LICENSE file to the repo (for example MIT), and is Apache 2.0 right for the model?
 
 - ~~Presentation time for a two-person team (20 or 30 minutes)?~~ Answered 2026-11-10: 30 minutes.
 - ~~Does a demo started live from Colab count as deployed?~~ Answered 2026-11-10: yes.

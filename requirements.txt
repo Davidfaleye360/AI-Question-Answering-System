@@ -12,10 +12,10 @@ pyyaml>=6.0
 pandas>=2.0
 matplotlib>=3.7
 
-# Demo (week 3)
+# Demo
 gradio>=6.0,<7                 # app/app.py passes the theme to launch(), which needs Gradio 6
 
 # Development
 pytest>=7.0
 
-# Pin exact versions (pip freeze) on the day the full training run starts, for reproducibility.
+# The exact versions we used are in requirements-lock.txt.

@@ -1,0 +1,33 @@
+# Exact versions this project was developed and evaluated with (macOS, Apple M2, Python 3.13.1).
+# Every number in results/ except the training run itself was produced with these.
+#
+#   pip install -r requirements-lock.txt
+#
+# requirements.txt lists the same packages with ranges instead. Use that one in Google Colab,
+# which comes with its own PyTorch build for the GPU: pinning torch there would replace it.
+#
+# The full training run was done in Colab on 2026-11-10 (Tesla T4) with:
+#   transformers 4.57.6, datasets 4.8.5, torch 2.14.1+cu130
+
+transformers==4.57.6
+datasets==5.0.1
+evaluate==0.4.6
+accelerate==1.15.0
+torch==2.15.0
+tokenizers==0.22.2
+huggingface_hub==0.36.2
+safetensors==0.8.0
+numpy==2.5.4
+
+pyyaml==6.0.3
+pandas==3.1.1
+matplotlib==3.11.2
+
+gradio==6.17.3
+
+pytest==9.2.0
+
+# Only needed to run the notebooks from the command line (Colab has its own):
+nbformat==5.11.1
+nbconvert==7.17.2
+ipykernel==7.4.0

@@ -17,7 +17,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | 1 | Pipeline works on a small sample | Done |
 | 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
 | 3 | Demo online | Demo done (run it from Colab or your computer); error analysis done |
-| 4 | Report and presentation | In progress: long-document extension done; report and slides to do |
+| 4 | Report and presentation | In progress: long-document extension and repo cleanup done; report and slides to do |
 
 See [TASKS.md](TASKS.md) for the full task list.
 
@@ -115,7 +115,11 @@ so the scores on unanswerable questions are a lower bound. Numbers are in `resul
 AI-Question-Answering-System/
 ├── README.md
 ├── TASKS.md                    # project task list
-├── requirements.txt
+├── requirements.txt            # packages, with version ranges (use this in Colab)
+├── requirements-lock.txt       # the exact versions we used
+├── docs/
+│   ├── PROJECT_HISTORY.md      # why each design decision was made, and every result in order
+│   └── MODEL_CARD.md           # the description shown on the model's Hugging Face page
 ├── configs/
 │   ├── distilbert.yaml         # every setting in one place
 │   └── smoke.yaml              # the few settings the 50-step smoke test changes
@@ -163,15 +167,13 @@ AI-Question-Answering-System/
     └── long_documents.json                   # scores when the model reads whole articles
 ```
 
-Coming next: the report and the slides.
-
 ## Getting started
 
-### In Google Colab (recommended: free GPU)
+### In Google Colab (free GPU, nothing to install)
 
-1. Open a notebook from this repo in Colab: **File → Open notebook → GitHub**, paste the repo URL.
-2. **Runtime → Change runtime type → T4 GPU.**
-3. Run the first cell. It clones the repo and installs the requirements.
+Open a notebook from the `notebooks/` folder in Colab (**File → Open notebook → GitHub**, paste the repo URL)
+and run its first cell, which clones the repo and installs the requirements. Training needs
+**Runtime → Change runtime type → T4 GPU**; everything else runs on the free CPU.
 
 ### On your own computer
 
@@ -180,48 +182,80 @@ git clone https://github.com/Davidfaleye360/AI-Question-Answering-System.git
 cd AI-Question-Answering-System
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r requirements.txt    # or requirements-lock.txt for the exact versions we used
 ```
 
-Run the unit tests (no internet or GPU needed):
+We used Python 3.13. The unit tests need no internet and no GPU, and take about 10 seconds:
 
 ```bash
 pytest -q
 ```
 
-Check preprocessing on real SQuAD data (downloads the dataset and tokenizer, about 50 MB):
+## Reproducing our results
+
+Every number in this README comes from one of the commands below. Steps 3 to 7 use our trained model from
+the Hugging Face Hub, so you can skip the training in step 2 and still reproduce all the results. Times are
+for an Apple M2 laptop unless stated.
+
+**1. Check the preprocessing on real data** (1 minute; downloads SQuAD 2.0 and the tokenizer, about 50 MB).
+It must end with `RESULT: PASS`.
 
 ```bash
 python scripts/check_preprocessing.py --n-examples 2000
 ```
 
-Run the training smoke test: 50 steps on 1% of the data. It works without a CUDA GPU (about 8 minutes on
-an M2 MacBook with 8 GB of memory) and writes about 1.8 GB to `outputs/smoke`. It ends with `RESULT: PASS`
-if the loss went down and the model was saved:
+**2. Train** (44 minutes on a Colab T4 GPU). Run sections 0 and 6 to 8 of
+[notebooks/02_train_colab.ipynb](https://colab.research.google.com/github/Davidfaleye360/AI-Question-Answering-System/blob/main/notebooks/02_train_colab.ipynb).
+To upload the result to your own Hugging Face account, change `hub_model_id` in `configs/distilbert.yaml`
+and add a write token as the Colab secret `HF_TOKEN`; without `--push-to-hub` the model is only saved to
+the output folder. A new run should land within a few tenths of a point of ours, not on the exact digits,
+because GPU arithmetic differs between machines. To only check that training works, run the 50-step smoke
+test (8 minutes without a GPU, writes 1.8 GB to `outputs/smoke`):
 
 ```bash
 python -m src.train --config configs/distilbert.yaml --overrides configs/smoke.yaml --fresh
 ```
 
-Score a model on the dev set. This downloads the model the first time (about 500 MB for RoBERTa), takes
-about 6 minutes on an M2 MacBook, and writes two files to `results/`. Add `--limit 20 --show 20 --no-save`
-to only look at the first 20 questions and the model's answers:
+**3. Score both models on the dev set** (3 and 6 minutes). Expected: 64.14 EM / 67.38 F1 for ours and
+79.90 / 82.91 for RoBERTa. Each run writes `results/<name>.json` and `results/<name>_predictions.json`,
+which steps 4, 6 and 7 read. Add `--limit 20 --show 20 --no-save` to just look at 20 questions and answers.
 
 ```bash
+python -m src.evaluate --model Ingsyling/distilbert-squad2 --name distilbert-squad2
 python -m src.evaluate --model deepset/roberta-base-squad2 --name roberta-base-squad2
 ```
 
-Sweep the no-answer threshold (needs no model: it reads the saved predictions) and measure size and speed
-(about a minute; downloads both models the first time):
+**4. Sweep the no-answer threshold** (seconds; needs no model). Expected: best τ −1.38 and 68.08
+cross-validated F1 for ours.
 
 ```bash
 python -m src.threshold --models distilbert-squad2 roberta-base-squad2 --labels "DistilBERT (ours)" "RoBERTa (deepset)"
+```
+
+**5. Measure size and speed** (1 minute). The sizes will match ours; the times depend on your computer.
+
+```bash
 python -m src.benchmark --models Ingsyling/distilbert-squad2 deepset/roberta-base-squad2
 ```
 
-Run the demo on your own computer. It downloads our model the first time (about 270 MB) and opens at
-http://127.0.0.1:7860. With `--share` it also prints a public `gradio.live` link that works for as long as
-the program keeps running (one week at most):
+**6. Error analysis** (seconds; needs no model). Expected: 4,258 errors for ours, 2,224 of them false
+answers. It keeps the hand-written labels in `results/error_sample.csv`.
+[Notebook 03](notebooks/03_error_analysis.ipynb) shows the same results with explanations.
+
+```bash
+python -m src.errors --models distilbert-squad2 roberta-base-squad2 --labels "DistilBERT (ours)" "RoBERTa (deepset)"
+```
+
+**7. Long documents** (5 minutes). Expected F1 on the whole Amazon rainforest article: 54.5 with the global
+rule and 62.0 with the per-window rule.
+
+```bash
+python -m src.longdoc --model Ingsyling/distilbert-squad2 --name distilbert-squad2
+```
+
+**8. The demo.** It downloads our model the first time (about 270 MB) and opens at http://127.0.0.1:7860.
+With `--share` it also prints a public `gradio.live` link that works for as long as the program keeps
+running (one week at most):
 
 ```bash
 python app/app.py
@@ -267,6 +301,14 @@ for Gradio Spaces, so instead the demo is started on demand, from Colab or a lap
 
 All settings live in [`configs/distilbert.yaml`](configs/distilbert.yaml), so experiments are easy to
 reproduce and compare. Don't hard-code numbers in notebooks; read them from the config.
+
+## Links
+
+- Our model: [Ingsyling/distilbert-squad2](https://huggingface.co/Ingsyling/distilbert-squad2) on the Hugging Face Hub
+- The demo in Colab: [notebooks/04_demo_colab.ipynb](https://colab.research.google.com/github/Davidfaleye360/AI-Question-Answering-System/blob/main/notebooks/04_demo_colab.ipynb)
+- Baseline model: [deepset/roberta-base-squad2](https://huggingface.co/deepset/roberta-base-squad2)
+- Dataset: [rajpurkar/squad_v2](https://huggingface.co/datasets/rajpurkar/squad_v2)
+- Why we made each design decision: [docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)
 
 ## References
 

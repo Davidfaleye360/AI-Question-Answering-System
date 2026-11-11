@@ -56,7 +56,7 @@ Owners follow the proposal: **A** = model (preprocessing, training, long documen
 - [ ] **T11. Technical report, 2–4 pages** (A writes method and training, B writes results and analysis)
 - [ ] **T12. Slides and rehearsal** (A + B)
   Include a QR code to the demo. Record a 2-minute backup video of the demo.
-- [ ] **T13. Final repo cleanup** (A + B)
+- [x] **T13. Final repo cleanup** (A + B) · _done on 2026-11-11: exact versions in `requirements-lock.txt`, a "Reproducing our results" section in the README with the expected numbers, links to the model and the Colab demo, and a model card (`docs/MODEL_CARD.md`) uploaded to https://huggingface.co/Ingsyling/distilbert-squad2. There is no Space (see T9)._
   README results table, pinned versions, reproduction steps, links to the model and the Space.
 - [ ] **T14. Presentation** (A + B)
 
