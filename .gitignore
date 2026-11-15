@@ -35,3 +35,6 @@ CLAUDE.md
 
 # Created by Gradio when the demo runs with --share
 .gradio/
+
+# Node packages (only needed to rebuild the slides)
+node_modules/

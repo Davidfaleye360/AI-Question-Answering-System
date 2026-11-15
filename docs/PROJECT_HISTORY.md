@@ -285,7 +285,7 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     in `results/error_sample.csv` with the passage around the gold answer and the prediction. Labels were
     proposed during development after reading each one; David and Kosi read them and
     correct any they disagree with (the file has no sign-off column: David's choice, 2026-11-11). Re-running `python -m src.errors` keeps labels already in the file.
-    Counts out of 60: swapped detail 14, reversed meaning 10, over-cautious (had the right span) 10,
+    Counts out of 60: swapped detail 14, changed meaning 10 (called "reversed meaning" until 2026-11-14), over-cautious (had the right span) 10,
     boundary but acceptable 10, distractor 7, missed with a wrong best span 5, not stated 2, gold label
     debatable 1, needs reasoning 1.
   - What it means: (1) 24 of 27 sampled false answers are trick questions that reuse the passage's wording
@@ -352,6 +352,35 @@ Title: "An Extractive Question Answering System with DistilBERT and SQuAD 2.0".
     limitations, conclusion, links, references.
   - Every number comes from `results/` or this file. David's fresco example is in the limitations.
   - Still to do by the team: read it, reword it, check the numbers. Rebuild after every edit.
+- **T12 (slides), first draft 2026-11-11.** `slides/presentation.pptx`, 19 slides, 16:9, built by
+  `slides/build_slides.js` (pptxgenjs) from the files in `results/`, so the charts are real PowerPoint
+  charts with the measured numbers and can be restyled or edited in PowerPoint.
+  - Structure: title; the task; the data; pipeline; preprocessing; training (loss curve); post-processing
+    and the threshold; main results; the size and speed trade-off; divider; threshold sweep; error types;
+    60 errors read by hand (three examples); question words; long documents; live demo; limitations (the
+    fresco example); what we learned; questions.
+  - Proposed split, written at the top of each slide's notes and easy to change: David slides 1-9 (task,
+    method, results), Kosi 10-15 (analysis and extension), David runs the demo on 16 while Kosi narrates,
+    Kosi 17, David 18, both 19. The notes add up to about 28 minutes including a 4-minute demo.
+  - Colours follow the figures: blue is always our model, orange always RoBERTa.
+  - QR code (`slides/qr_demo.png`, made with the Python package segno) points to the README's
+    "Try the demo" section, because a gradio.live link changes every time the demo starts.
+  - Demo script in the notes of slide 16: France (answerable); "What is France a region of?" (ours says
+    Normandy, RoBERTa abstains); the oxygen question with the slider (abstains, then answers "oxygen"
+    wrongly above -1.14); then a long passage or an audience question.
+  - Checked by rendering every slide with LibreOffice: no overflow or overlap. The threshold chart is a
+    scatter chart with lines, because a line chart wrapped the negative axis labels. Fonts may differ
+    slightly in PowerPoint, so the team should page through it once there.
+  - Still to do by the team: rehearse, time it, scan the QR code with a phone, record the backup video.
+- **T12 slides, second version (2026-11-14, David's requests).** The deck grew from 19 to 27 slides so that it
+  fills the 30 minutes: an outline, why the task matters, how EM and F1 are computed (worked example), what
+  DistilBERT and the new QA layer are, how we know the code is right (tests, smoke test, reproducing
+  RoBERTa), the answerable / unanswerable trade-off behind the threshold curve, F1 by answer length, and
+  the mechanism of the per-window rule with an illustration. The speaker notes are retimed and add up to
+  30.0 minutes including a 3-minute demo; questions come after.
+  - The QR code is now only on the first and last slide. David opens the demo from Colab in a new tab, so
+    the demo slide has a clickable "Open in Google Colab" button (to notebook 04) and three start-up steps
+    instead of a QR code. The notebook needs about two minutes to start, so it must be started before the talk.
 
 ## Open questions
 - ~~Add a LICENSE file to the repo, and is Apache 2.0 right for the model?~~ Answered 2026-11-11: David

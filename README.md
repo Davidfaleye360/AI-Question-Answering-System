@@ -17,7 +17,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 | 1 | Pipeline works on a small sample | Done |
 | 2 | Model trained and scored | Done: 67.4 F1 on the dev set (target was 65+) |
 | 3 | Demo online | Demo done (run it from Colab or your computer); error analysis done |
-| 4 | Report and presentation | In progress: report drafted ([PDF](report/report.pdf)); slides to do |
+| 4 | Report and presentation | In progress: report ([PDF](report/report.pdf)) and slides ([PDF](slides/presentation.pdf)) drafted; rehearsal to do |
 
 See [TASKS.md](TASKS.md) for the full task list.
 
@@ -122,6 +122,11 @@ AI-Question-Answering-System/
 │   ├── report.md               # the technical report (edit this)
 │   ├── report.css              # how the PDF looks
 │   └── report.pdf              # built with scripts/build_report.py
+├── slides/
+│   ├── presentation.pptx       # the slides, with speaker notes (edit this in PowerPoint)
+│   ├── presentation.pdf        # the same slides as a PDF, for reading on GitHub
+│   ├── build_slides.js         # how the deck was generated from results/
+│   └── qr_demo.png             # QR code to this README's "Try the demo" section
 ├── docs/
 │   ├── PROJECT_HISTORY.md      # why each design decision was made, and every result in order
 │   └── MODEL_CARD.md           # the description shown on the model's Hugging Face page
@@ -315,6 +320,7 @@ reproduce and compare. Don't hard-code numbers in notebooks; read them from the 
 - Baseline model: [deepset/roberta-base-squad2](https://huggingface.co/deepset/roberta-base-squad2)
 - Dataset: [rajpurkar/squad_v2](https://huggingface.co/datasets/rajpurkar/squad_v2)
 - The technical report: [report/report.pdf](report/report.pdf)
+- The slides: [slides/presentation.pdf](slides/presentation.pdf)
 - Why we made each design decision: [docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)
 
 ## Licence
