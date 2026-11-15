@@ -39,7 +39,7 @@ model-index:
 a question, it marks the words in the passage that answer the question, or says that the passage does not
 contain an answer.
 
-A course project for CSCI 390 (Natural Language Processing and Applications) by David Falaye and
+A course project for CSCI 390 (Natural Language Processing and Applications) by David Faleye and
 Kosisochukwu Ogbuanya. Code, training notebook, evaluation and error analysis:
 https://github.com/Davidfaleye360/AI-Question-Answering-System
 

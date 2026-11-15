@@ -56,7 +56,7 @@ const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE";          // 13.33 x 7.5 inches
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 pres.title = "Extractive Question Answering on SQuAD 2.0 with a Fine-Tuned DistilBERT";
-pres.author = "David Falaye and Kosisochukwu Ogbuanya";
+pres.author = "David Faleye and Kosisochukwu Ogbuanya";
 const C = pres.SchemeColor;
 const W = 13.33, MARGIN = 0.65;
 const FOOTER = "CSCI 390 · Question answering on SQuAD 2.0";
@@ -139,7 +139,7 @@ startSection("Introduction");
   s.addText("Teaching a small model to answer questions, and to know when it can't", { placeholder: "title" });
   s.addText([
     { text: "Extractive question answering on SQuAD 2.0 with a fine-tuned DistilBERT", options: { breakLine: true } },
-    { text: "David Falaye · Kosisochukwu Ogbuanya", options: { breakLine: true, fontSize: 18 } },
+    { text: "David Faleye · Kosisochukwu Ogbuanya", options: { breakLine: true, fontSize: 18 } },
     { text: "CSCI 390: Natural Language Processing and Applications · Dr. Qi Li", options: { fontSize: 16 } },
   ], { placeholder: "body" });
   s.addImage({ path: path.join(__dirname, "qr_demo.png"), x: 10.55, y: 2.05, w: 2.1, h: 2.1, altText: "QR code to the project repository and demo" });
@@ -757,7 +757,7 @@ startSection("Demo and conclusion");
   s.addText([
     { text: "Code, results and report: github.com/Davidfaleye360/AI-Question-Answering-System", options: { breakLine: true, fontSize: 18 } },
     { text: "Model: huggingface.co/Ingsyling/distilbert-squad2", options: { breakLine: true, fontSize: 18 } },
-    { text: "David Falaye · Kosisochukwu Ogbuanya", options: { fontSize: 16 } },
+    { text: "David Faleye · Kosisochukwu Ogbuanya", options: { fontSize: 16 } },
   ], { placeholder: "body" });
   s.addImage({ path: path.join(__dirname, "qr_demo.png"), x: 10.55, y: 2.05, w: 2.1, h: 2.1, altText: "QR code to the project repository and demo" });
   s.addText("Try the demo", { x: 10.55, y: 4.25, w: 2.1, h: 0.35, isTextBox: true, margin: 0, fontSize: 14, color: C.background2, align: "center" });

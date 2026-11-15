@@ -1,7 +1,7 @@
 ---
 title: "Extractive Question Answering on SQuAD 2.0 with a Fine-Tuned DistilBERT"
 author:
-  - David Falaye
+  - David Faleye
   - Kosisochukwu Ogbuanya
 date: "CSCI 390: Natural Language Processing and Applications · Dr. Qi Li · November 2026"
 ---

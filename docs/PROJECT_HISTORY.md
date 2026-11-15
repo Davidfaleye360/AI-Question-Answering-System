@@ -28,7 +28,7 @@ Estimated effort: 45–60 hours for the pair over about 4 weeks.
 
 ## Team
 
-David Falaye and Kosisochukwu Ogbuanya. Roles: **A = model** (preprocessing, fine-tuning, training
+David Faleye and Kosisochukwu Ogbuanya. Roles: **A = model** (preprocessing, fine-tuning, training
 experiments, long-document mode); **B = evaluation and demo** (post-processing, scoring, error analysis,
 Gradio app). Both: debugging, documentation, testing, slides, rehearsal. Names not yet assigned to A/B.
 

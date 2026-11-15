@@ -24,7 +24,7 @@ the passage doesn't contain one.
   Model: [Ingsyling/distilbert-squad2](https://huggingface.co/Ingsyling/distilbert-squad2)
 - **RoBERTa (deepset):** a published baseline, 82.9 F1, about twice the size and half the speed.
 
-CSCI 390 course project by David Falaye and Kosisochukwu Ogbuanya.
+CSCI 390 course project by David Faleye and Kosisochukwu Ogbuanya.
 Code, training details and results: https://github.com/Davidfaleye360/AI-Question-Answering-System
 
 This Space is built from that repository by `scripts/deploy_space.py`. Edit the files there, not here.

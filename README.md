@@ -8,7 +8,7 @@ We fine-tune [`distilbert-base-uncased`](https://huggingface.co/distilbert/disti
 [SQuAD 2.0](https://rajpurkar.github.io/SQuAD-explorer/) and compare it with the published
 [`deepset/roberta-base-squad2`](https://huggingface.co/deepset/roberta-base-squad2).
 
-**Team:** David Falaye, Kosisochukwu Ogbuanya
+**Team:** David Faleye, Kosisochukwu Ogbuanya
 
 ## Status
 

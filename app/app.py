@@ -39,7 +39,7 @@ INTRO = """
 Paste a passage, ask a question about it, and the model points to the answer **inside the passage**.
 If the passage doesn't contain the answer, the model should say so instead of guessing.
 
-CSCI 390 course project by David Falaye and Kosisochukwu Ogbuanya ·
+CSCI 390 course project by David Faleye and Kosisochukwu Ogbuanya ·
 [code](https://github.com/Davidfaleye360/AI-Question-Answering-System) ·
 [our model](https://huggingface.co/Ingsyling/distilbert-squad2)
 """
