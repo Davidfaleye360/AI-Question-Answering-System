@@ -126,7 +126,8 @@ AI-Question-Answering-System/
 │   ├── presentation.pptx       # the slides, with speaker notes (edit this in PowerPoint)
 │   ├── presentation.pdf        # the same slides as a PDF, for reading on GitHub
 │   ├── build_slides.js         # how the deck was generated from results/
-│   └── qr_demo.png             # QR code to this README's "Try the demo" section
+│   ├── qr_demo.png             # QR code to this README's "Try the demo" section (first slide)
+│   └── qr_colab.png            # QR code that opens the demo notebook in Colab (last slide)
 ├── docs/
 │   ├── PROJECT_HISTORY.md      # why each design decision was made, and every result in order
 │   └── MODEL_CARD.md           # the description shown on the model's Hugging Face page

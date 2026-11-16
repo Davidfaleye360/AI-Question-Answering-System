@@ -12,7 +12,8 @@
 // The charts are real PowerPoint charts filled from the result files, so the deck cannot
 // drift away from the measured numbers. Text and speaker notes are written below: edit them
 // here and rebuild, or edit the .pptx directly once you are happy with the structure.
-// The first and last slides use slides/qr_demo.png (made with the Python package `segno`).
+// The first slide uses slides/qr_demo.png (the repository); the last slide uses slides/qr_colab.png, which opens
+// the demo notebook in Google Colab. Both were made with the Python package `segno`.
 // The demo slide has a clickable link to the Colab notebook instead of a QR code.
 
 const fs = require("fs");
@@ -310,7 +311,7 @@ startSection("How we built it");
 // 5. Preprocessing
 {
   const s = content("Preparing the text: word pieces, windows and labels",
-    "SPEAKER: David. (1.5 min)\nThe model reads the question and the passage as one sequence of at most 384 tokens. Top row: a special CLS token, the question, a separator, the passage. If the passage is too long it is cut into windows that share 128 tokens, so an answer near a cut is always complete in at least one window. The dataset gives the answer as a character position, the model predicts token positions, so we convert between them. The key trick for 'no answer': unanswerable questions are labelled with position zero, the CLS token. So 'pointing at CLS' means 'there is no answer'. We checked this step by decoding 2,000 labels back to text: 99.7% matched exactly.");
+    "SPEAKER: David. (1.5 min)\nThe model reads the question and the passage as one sequence of at most 384 tokens. Top row: a special CLS token, the question, a separator, the passage. If the passage is too long it is cut into windows that share 128 tokens, so an answer near a cut is always complete in at least one window. The dataset gives the answer as a character position, the model predicts token positions, so we convert between them. The key trick for 'no answer': unanswerable questions are labelled with position zero, the CLS token. So 'pointing at CLS' means 'there is no answer'. We checked this step on 2,000 training questions by turning the labels back into text: 1,310 of the 1,314 answers matched exactly, that is 99.7%, the other 4 differed by a character or so, and none were lost.");
   // The input sequence
   text(s, "What the model reads: one sequence of at most 384 word pieces (\"tokens\")", MARGIN, 1.6, 10, 0.35, { fontSize: 14, bold: true, color: C.text2 });
   const blocks = [["[CLS]", 1.0, C.accent6], ["question", 2.6, C.accent4], ["[SEP]", 0.9, C.text2], ["passage", 6.63, C.accent1], ["[SEP]", 0.9, C.text2]];
@@ -332,7 +333,7 @@ startSection("How we built it");
   const rx = 9.75, rw = W - MARGIN - rx;
   card(s, rx, 3.45, rw, 3.05, C.background2, "check card");
   text(s, "99.7%", rx + 0.25, 3.6, rw - 0.5, 0.9, { fontSize: 44, bold: true, color: C.accent1, fontFace: THEME.headFontFace, valign: "middle" });
-  text(s, "of the 2,000 answers we checked still matched the correct answer exactly after this step. None were lost.", rx + 0.25, 4.6, rw - 0.5, 1.7, { fontSize: 14, color: C.text2 });
+  text(s, "of the answers we checked still matched the correct answer exactly after this step: 1,310 of 1,314, from 2,000 training questions. None were lost.", rx + 0.25, 4.6, rw - 0.5, 1.7, { fontSize: 14, color: C.text2 });
 }
 
 // 6. Training (native line chart of the loss)
@@ -759,8 +760,8 @@ startSection("Demo and conclusion");
     { text: "Model: huggingface.co/Ingsyling/distilbert-squad2", options: { breakLine: true, fontSize: 18 } },
     { text: "David Faleye · Kosisochukwu Ogbuanya", options: { fontSize: 16 } },
   ], { placeholder: "body" });
-  s.addImage({ path: path.join(__dirname, "qr_demo.png"), x: 10.55, y: 2.05, w: 2.1, h: 2.1, altText: "QR code to the project repository and demo" });
-  s.addText("Try the demo", { x: 10.55, y: 4.25, w: 2.1, h: 0.35, isTextBox: true, margin: 0, fontSize: 14, color: C.background2, align: "center" });
+  s.addImage({ path: path.join(__dirname, "qr_colab.png"), x: 10.55, y: 2.05, w: 2.1, h: 2.1, altText: "QR code that opens the demo notebook in Google Colab" });
+  s.addText("Run the demo in Colab", { x: 10.55, y: 4.25, w: 2.1, h: 0.35, isTextBox: true, margin: 0, fontSize: 14, color: C.background2, align: "center" });
   s.addNotes("SPEAKER: both. (remaining time)\nLikely questions and short answers:\n- Why not a bigger model? It was the trade-off we wanted to measure; RoBERTa shows what size buys.\n- Why is the threshold gain so small? The curve is flat near its peak; the model's scores for 'answer' and 'no answer' overlap a lot.\n- How do you know the evaluation is right? Our code reproduces RoBERTa's published 79.9 / 82.9 exactly and matches the official metric.\n- Did you tune on the test set? Only the threshold, and we report the cross-validated number for that reason.\n- What would you do next? A separate answerability classifier, and retrieval for long documents.");
 }
 
